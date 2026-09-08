@@ -58,40 +58,48 @@ export function PhotoLightbox({
     onIndexChange((index + 1) % total);
   }, [index, total, onIndexChange]);
 
-  // Preload the NEXT photo with the exact optimized URL/sizes the
-  // <Image> below will request (getImageProps mirrors its loader), so
-  // arrow-key and swipe navigation swaps instantly instead of
-  // re-fetching. Implemented as <link rel=preload as=image
-  // imagesrcset/imagesizes> — set via setAttribute because the
-  // .imageSrcSet IDL property is not honored for dynamically inserted
-  // links (verified in Chromium). The link is removed on cleanup; the
-  // fetched variant stays in the HTTP cache.
+  // Preload the NEIGHBOURING photos (next AND previous) with the exact
+  // optimized URL/sizes the <Image> below will request (getImageProps
+  // mirrors its loader), so arrow-key and swipe navigation swaps
+  // instantly in BOTH directions instead of re-fetching. Implemented
+  // as <link rel=preload as=image imagesrcset/imagesizes> — set via
+  // setAttribute because the .imageSrcSet IDL property is not honored
+  // for dynamically inserted links (verified in Chromium). Links are
+  // removed on cleanup; the fetched variants stay in the HTTP cache.
   React.useEffect(() => {
     if (index === null || total < 2) return;
-    const next = photos[(index + 1) % total];
-    if (!next) return;
-    const { props } = getImageProps({
-      src: next.src,
-      alt: "",
-      width: next.width,
-      height: next.height,
-      sizes: LIGHTBOX_SIZES,
-    });
-    const srcSet = typeof props.srcSet === "string" ? props.srcSet : "";
-    const link = document.createElement("link");
-    link.setAttribute("rel", "preload");
-    link.setAttribute("as", "image");
-    if (typeof props.src === "string") {
-      // href doubles as the fallback for engines without imagesrcset
-      link.setAttribute("href", props.src);
+    const links: HTMLLinkElement[] = [];
+    const neighbours = [
+      (index + 1) % total,
+      (index - 1 + total) % total,
+    ];
+    for (const n of neighbours) {
+      const next = photos[n];
+      if (!next || n === index) continue;
+      const { props } = getImageProps({
+        src: next.src,
+        alt: "",
+        width: next.width,
+        height: next.height,
+        sizes: LIGHTBOX_SIZES,
+      });
+      const srcSet = typeof props.srcSet === "string" ? props.srcSet : "";
+      const link = document.createElement("link");
+      link.setAttribute("rel", "preload");
+      link.setAttribute("as", "image");
+      if (typeof props.src === "string") {
+        // href doubles as the fallback for engines without imagesrcset
+        link.setAttribute("href", props.src);
+      }
+      if (srcSet) {
+        link.setAttribute("imagesrcset", srcSet);
+        link.setAttribute("imagesizes", LIGHTBOX_SIZES);
+      }
+      document.head.appendChild(link);
+      links.push(link);
     }
-    if (srcSet) {
-      link.setAttribute("imagesrcset", srcSet);
-      link.setAttribute("imagesizes", LIGHTBOX_SIZES);
-    }
-    document.head.appendChild(link);
     return () => {
-      link.remove();
+      for (const link of links) link.remove();
     };
   }, [index, photos, total]);
 

@@ -49,15 +49,15 @@ const signatureItems = signatureDishNames
 const heroQuote = verifiedQuotes[1]; // "peaceful atmosphere" Google review
 const shortQuote = verifiedQuotes[0]; // "Excellent ambience and tasty food."
 
-// Five representative café moments for the feed strip (existing assets,
-// descriptive alt from content/gallery.ts — never claimed as literal IG
-// posts; the copy stays neutral: "moments from the café").
+// Four representative café moments for the feed strip + an espresso
+// “Follow” tile that ends the row (existing assets, descriptive alt from
+// content/gallery.ts — never claimed as literal IG posts; the copy stays
+// neutral: "moments from the café").
 const feedPhotoSrcs = [
   "/images/gallery-interior.png",
   "/images/gallery-coffee-pour.png",
   "/images/patisserie-counter.png",
   "/images/gallery-baking.png",
-  "/images/gallery-spread.png",
 ];
 const feedPhotos = feedPhotoSrcs
   .map((src) => galleryPhotos.find((p) => p.src === src))
@@ -316,9 +316,45 @@ export default function HomePage() {
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                     className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:group-hover:transform-none motion-reduce:transition-none"
                   />
+                  {/* Caption scrim — cream text on an espresso gradient at
+                      the foot of the tile; mouse-only reveal (the aria-label
+                      already carries the caption for AT). */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-espresso/80 via-espresso/35 to-transparent px-3.5 pt-10 pb-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none"
+                  >
+                    <span className="line-clamp-2 text-xs font-medium leading-snug text-cream">
+                      {photo.caption}
+                    </span>
+                  </span>
                 </a>
               </li>
             ))}
+            {/* Follow tile — deep espresso card closing the strip (matches
+                the chip-rating grammar: espresso surface, butter accents,
+                DESIGN.md-legal). */}
+            <li>
+              <a
+                href={site.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Follow Papilio on Instagram — ${site.instagramHandle}`}
+                className="group flex aspect-square flex-col items-center justify-center gap-3 rounded-card bg-espresso p-4 pb-6 text-center shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transition-none motion-reduce:hover:transform-none"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex size-12 items-center justify-center rounded-full bg-cream/10 transition-transform duration-300 group-hover:-rotate-6 motion-reduce:transition-none motion-reduce:group-hover:transform-none"
+                >
+                  <Instagram className="size-6 text-butter" />
+                </span>
+                <span className="font-display text-lg leading-snug text-cream">
+                  Follow
+                </span>
+                <span className="label-caps text-butter/80">
+                  {site.instagramHandle}
+                </span>
+              </a>
+            </li>
           </ul>
         </Reveal>
       </section>

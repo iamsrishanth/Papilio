@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Instagram, Quote } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { Reveal } from "@/components/site/reveal";
+import { ReadingProgress } from "@/components/site/reading-progress";
 import { WingUnfold } from "@/components/story/wing-unfold";
 import { StoryTimeline } from "@/components/story/story-timeline";
 import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
@@ -77,6 +78,9 @@ export default function StoryPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      {/* Hairline caramel reading progress — decorative wayfinding for
+          the long editorial scroll (incl. the 200vh wing-unfold zone). */}
+      <ReadingProgress />
       <JsonLd data={breadcrumbLd([{ name: "Story", path: "/story" }])} />
       {/* ------------------------------------------------ Header */}
       <header className="pt-12 pb-10 max-w-2xl lg:pt-16">

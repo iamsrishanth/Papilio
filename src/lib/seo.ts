@@ -25,3 +25,30 @@ export function breadcrumbLd(items: { name: string; path: string }[]) {
     ],
   };
 }
+
+/**
+ * ImageObject ItemList for the gallery — every photo with its verified
+ * caption (name), descriptive alt (description) and intrinsic pixel
+ * size. No creator/license fields: the photography is representative
+ * placeholder art until the client's own feed photos are swapped in.
+ */
+export function galleryImagesLd(
+  photos: { src: string; alt: string; caption: string; width: number; height: number }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: photos.map((photo, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "ImageObject",
+        contentUrl: `${SITE_URL}${photo.src}`,
+        name: photo.caption,
+        description: photo.alt,
+        width: photo.width,
+        height: photo.height,
+      },
+    })),
+  };
+}

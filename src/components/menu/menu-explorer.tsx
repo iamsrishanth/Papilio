@@ -333,7 +333,7 @@ export function MenuExplorer() {
           className="sticky top-16 z-30 -mx-4 border-b border-linen/70 bg-cream/95 px-4 py-2.5 backdrop-blur-md lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none"
         >
           <ul className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:pb-0">
-            {sections.map(({ cat, items: catItems }) => {
+            {sections.map(({ cat, idx, items: catItems }) => {
               const n = catItems.length;
               const empty = n === 0;
               const isActive = active === cat.id;
@@ -354,6 +354,17 @@ export function MenuExplorer() {
                         : "bg-ivory text-cocoa hover:border-caramel/50 hover:text-caramel lg:border-transparent lg:bg-transparent lg:font-normal"
                     )}
                   >
+                    {/* Editorial index (desktop rail only) — mirrors the
+                        01–21 numbers in the section headers */}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "tnum mr-2 hidden text-[0.65rem] font-semibold tracking-[0.14em] lg:inline",
+                        isActive ? "text-caramel/90" : "text-cocoa/45"
+                      )}
+                    >
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
                     {cat.label}
                     <span className="tnum ml-1.5 opacity-60">{n}</span>
                   </button>

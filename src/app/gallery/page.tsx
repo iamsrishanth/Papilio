@@ -4,7 +4,7 @@ import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { Reveal } from "@/components/site/reveal";
 import { GalleryGrid } from "@/components/gallery/gallery-grid";
 import { JsonLd } from "@/components/site/json-ld";
-import { breadcrumbLd } from "@/lib/seo";
+import { breadcrumbLd, galleryImagesLd } from "@/lib/seo";
 import { galleryPhotos } from "@/content/gallery";
 
 export const metadata: Metadata = {
@@ -32,6 +32,7 @@ export default function GalleryPage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 pt-12 pb-20 sm:px-6 lg:px-8 lg:pt-16 lg:pb-28">
       <JsonLd data={breadcrumbLd([{ name: "Gallery", path: "/gallery" }])} />
+      <JsonLd data={galleryImagesLd(galleryPhotos)} />
       <header className="mb-10 max-w-2xl lg:mb-14">
         <Reveal>
           <SectionEyebrow>Gallery</SectionEyebrow>
