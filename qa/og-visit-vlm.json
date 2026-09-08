@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "No, the image contains visible text (\"Confetrio\"), so it fails the first check.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788906028,
+  "id": "20260909062017ce691ca9e2ff4560",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "20260909062017ce691ca9e2ff4560",
+  "usage": {
+    "completion_tokens": 20,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1417,
+    "prompt_tokens_details": {
+      "cached_tokens": 2
+    },
+    "total_tokens": 1437
+  }
+}

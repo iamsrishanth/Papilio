@@ -1,0 +1,24 @@
+{
+  "name": "PAPILIO — Patisserie | Café",
+  "short_name": "Papilio",
+  "description": "A cozy patisserie-café in Excise Colony, Hanamkonda, Warangal. Open all seven days, 8:00 AM – 10:30 PM.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FAF3E8",
+  "theme_color": "#FAF3E8",
+  "icons": [
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

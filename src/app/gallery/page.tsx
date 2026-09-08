@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { Reveal } from "@/components/site/reveal";
 import { GalleryGrid } from "@/components/gallery/gallery-grid";
+import { JsonLd } from "@/components/site/json-ld";
+import { breadcrumbLd } from "@/lib/seo";
 import { galleryPhotos } from "@/content/gallery";
 
 export const metadata: Metadata = {
@@ -14,13 +16,21 @@ export const metadata: Metadata = {
     description:
       "The room, the bar, the counter and the plates in between — photos from our café in Excise Colony, Hanamkonda.",
     url: "/gallery",
-    images: ["/images/og-cover-lockup.png"],
+    images: [
+      {
+        url: "/images/og-gallery.png",
+        width: 1344,
+        height: 768,
+        alt: "The warm Papilio café interior with hanging lamps, wooden tables and plants",
+      },
+    ],
   },
 };
 
 export default function GalleryPage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 pt-12 pb-20 sm:px-6 lg:px-8 lg:pt-16 lg:pb-28">
+      <JsonLd data={breadcrumbLd([{ name: "Gallery", path: "/gallery" }])} />
       <header className="mb-10 max-w-2xl lg:mb-14">
         <Reveal>
           <SectionEyebrow>Gallery</SectionEyebrow>

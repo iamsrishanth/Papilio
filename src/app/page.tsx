@@ -45,6 +45,7 @@ const signatureItems = signatureDishNames
   .filter((i): i is MenuItem => Boolean(i));
 
 const heroQuote = verifiedQuotes[1]; // "peaceful atmosphere" Google review
+const shortQuote = verifiedQuotes[0]; // "Excellent ambience and tasty food."
 
 export default function HomePage() {
   return (
@@ -157,6 +158,16 @@ export default function HomePage() {
                 </blockquote>
                 <figcaption className="label-caps mt-3 text-butter/80">
                   {heroQuote.source}
+                </figcaption>
+              </figure>
+
+              {/* Second verified guest line, quieter register */}
+              <figure className="mt-6 max-w-xl border-t border-cream/10 pt-5">
+                <blockquote className="font-display text-base italic leading-relaxed text-cream/75">
+                  &ldquo;{shortQuote.quote}&rdquo;
+                </blockquote>
+                <figcaption className="label-caps mt-2 text-cream/50">
+                  {shortQuote.source}
                 </figcaption>
               </figure>
 
@@ -273,6 +284,16 @@ export default function HomePage() {
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </CtaButton>
               </div>
+              <Link
+                href="/visit#faq"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cocoa underline-offset-4 hover:text-caramel hover:underline"
+              >
+                <MessageCircle
+                  className="size-4 text-caramel"
+                  aria-hidden="true"
+                />
+                Hours, bookings &amp; other common questions
+              </Link>
             </Reveal>
             <Reveal delay={0.1} className="lg:col-span-5">
               <HoursCard />

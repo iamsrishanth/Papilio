@@ -24,6 +24,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  manifest: "/manifest.webmanifest",
   title: {
     default: "Papilio — Patisserie | Café in Hanamkonda, Warangal",
     template: "%s · Papilio",

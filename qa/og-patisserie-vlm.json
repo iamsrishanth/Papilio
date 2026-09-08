@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "No, there is visible text on the price tags; yes, it has a warm, earthy palette; and yes, it looks like premium editorial café photography in landscape orientation.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788906013,
+  "id": "2026090906201281b07bb2c0384797",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "2026090906201281b07bb2c0384797",
+  "usage": {
+    "completion_tokens": 37,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1417,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 1454
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) **Yes**, the butterfly is centered and clearly recognizable as a swallowtail.\n2) **Yes**, the background is a solid dark espresso-brown with no text or watermarks (though the image includes a surrounding environment, the icon area itself is clean).\n3) **Mostly yes**, the butterfly has clean edges and a flat style, though it has a subtle textured/gold-foil appearance rather than being perfectly flat vector art.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788906005,
+  "id": "2026090906200250eacd15e2164ac4",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "2026090906200250eacd15e2164ac4",
+  "usage": {
+    "completion_tokens": 90,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1375,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 1465
+  }
+}

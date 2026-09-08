@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "NO-TEXT. The building's exterior and the visible interior through the windows are completely free of any letters, words, or numbers.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788906127,
+  "id": "20260909062205724f8939e6534315",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "20260909062205724f8939e6534315",
+  "usage": {
+    "completion_tokens": 28,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1394,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 1422
+  }
+}

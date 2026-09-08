@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Yes, the image meets all criteria: no visible text, warm earthy palette, and premium editorial café photography in landscape orientation.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788906012,
+  "id": "2026090906201059c8efbd12194500",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "2026090906201059c8efbd12194500",
+  "usage": {
+    "completion_tokens": 27,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1417,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 1444
+  }
+}

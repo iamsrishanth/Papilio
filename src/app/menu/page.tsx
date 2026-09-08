@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { MenuExplorer } from "@/components/menu/menu-explorer";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { VegGlyph } from "@/components/site/veg-glyph";
+import { JsonLd } from "@/components/site/json-ld";
+import { breadcrumbLd } from "@/lib/seo";
 import { site } from "@/content/site";
 import { menu, totalCategories, totalItems } from "@/content/menu";
 
@@ -16,13 +18,34 @@ export const metadata: Metadata = {
     description:
       "From focaccia sandwiches to filter coffee and counter desserts — the full menu of our Hanamkonda patisserie-café.",
     url: "/menu",
-    images: ["/images/og-cover-lockup.png"],
+    images: [
+      {
+        url: "/images/og-menu.png",
+        width: 1344,
+        height: 768,
+        alt: "Overhead spread of Papilio café dishes — salad, wrap, fries and burger on cream linen",
+      },
+    ],
   },
 };
 
 export default function MenuPage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+      <JsonLd data={breadcrumbLd([{ name: "Menu", path: "/menu" }])} />
+
+      {/* Print masthead — visible only on the printed sheet, so a paper
+          menu carries the café identity (header/footer are print:hidden). */}
+      <div className="hidden print:mb-8 print:block print:border-b print:border-linen print:pb-6 print:text-center">
+        <p className="wordmark text-2xl text-espresso">PAPILIO</p>
+        <p className="mt-1 text-xs text-cocoa">
+          Patisserie | Café — {site.address.line1}, {site.address.line2}
+        </p>
+        <p className="tnum mt-0.5 text-xs text-cocoa">
+          {site.phoneDisplay} · Open all seven days, {site.hours.display}
+        </p>
+        <p className="mt-0.5 text-[0.65rem] text-cocoa/80">{site.fssai}</p>
+      </div>
       <header className="mb-10 max-w-2xl">
         <SectionEyebrow>The menu</SectionEyebrow>
         <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">

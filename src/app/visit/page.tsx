@@ -7,6 +7,8 @@ import { Reveal } from "@/components/site/reveal";
 import { HoursCard } from "@/components/site/hours-card";
 import { MapEmbed } from "@/components/site/map-embed";
 import { FaqAccordion } from "@/components/site/faq-accordion";
+import { JsonLd } from "@/components/site/json-ld";
+import { breadcrumbLd } from "@/lib/seo";
 import { site, links, whatsappLink, whatsappMessages } from "@/content/site";
 import { visitFaqs, visitFaqJsonLd } from "@/content/faq";
 
@@ -20,17 +22,22 @@ export const metadata: Metadata = {
     description:
       "Find us in Excise Colony, Hanamkonda — open daily 8:00 AM to 10:30 PM, with dine-in, takeaway and delivery.",
     url: "/visit",
-    images: ["/images/og-cover-lockup.png"],
+    images: [
+      {
+        url: "/images/og-visit.png",
+        width: 1344,
+        height: 768,
+        alt: "The warm Papilio café facade glowing in the evening light",
+      },
+    ],
   },
 };
 
 export default function VisitPage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(visitFaqJsonLd) }}
-      />
+      <JsonLd data={visitFaqJsonLd} />
+      <JsonLd data={breadcrumbLd([{ name: "Visit", path: "/visit" }])} />
       {/* ------------------------------------------------ Header */}
       <header className="pt-12 pb-10 max-w-2xl lg:pt-16">
         <Reveal>
@@ -181,7 +188,11 @@ export default function VisitPage() {
       </section>
 
       {/* ------------------------------------------------ FAQ */}
-      <section aria-labelledby="faq-heading" className="pb-16 lg:pb-24">
+      <section
+        id="faq"
+        aria-labelledby="faq-heading"
+        className="scroll-mt-24 pb-16 lg:pb-24"
+      >
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
           <Reveal className="lg:col-span-4">
             <SectionEyebrow>Good to know</SectionEyebrow>

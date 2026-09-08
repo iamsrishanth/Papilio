@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Yes, the image is a landscape-oriented, premium editorial-style café photograph with a warm, earthy palette and no visible text, letters, numbers, or watermarks.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788906017,
+  "id": "20260909062015917e6870292a4f5e",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "20260909062015917e6870292a4f5e",
+  "usage": {
+    "completion_tokens": 35,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1417,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 1452
+  }
+}

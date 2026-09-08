@@ -5,6 +5,9 @@ import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { Reveal } from "@/components/site/reveal";
 import { WingUnfold } from "@/components/story/wing-unfold";
 import { StoryTimeline } from "@/components/story/story-timeline";
+import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
+import { JsonLd } from "@/components/site/json-ld";
+import { breadcrumbLd } from "@/lib/seo";
 import {
   storyIntro,
   storyChapters,
@@ -12,7 +15,7 @@ import {
   storyTimeline,
   unfoldCopy,
 } from "@/content/story";
-import { pressLine } from "@/content/reviews";
+import { pressLine, ownerVoiceLine } from "@/content/reviews";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +29,14 @@ export const metadata: Metadata = {
     description:
       "From chrysalis to butterfly: the story of Papilio, a patisserie-led café in Excise Colony, Hanamkonda.",
     url: "/story",
-    images: ["/images/og-cover-lockup.png"],
+    images: [
+      {
+        url: "/images/og-story.png",
+        width: 1344,
+        height: 768,
+        alt: "Freshly baked golden focaccia with herbs on a wooden board in warm bakery light",
+      },
+    ],
   },
 };
 
@@ -46,6 +56,20 @@ const chapterImages = {
   },
 } as const;
 
+/** Editorial chapter divider — hairlines + the line-art glyph (decorative). */
+function DividerGlyph() {
+  return (
+    <div
+      aria-hidden="true"
+      className="flex items-center justify-center gap-4 pb-4"
+    >
+      <span className="h-px w-16 bg-linen" />
+      <ButterflyGlyph variant="line" className="size-5 opacity-70" decorative />
+      <span className="h-px w-16 bg-linen" />
+    </div>
+  );
+}
+
 export default function StoryPage() {
   const room = storyChapters.find((c) => c.id === "room");
   const craft = storyChapters.find((c) => c.id === "craft");
@@ -53,6 +77,7 @@ export default function StoryPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <JsonLd data={breadcrumbLd([{ name: "Story", path: "/story" }])} />
       {/* ------------------------------------------------ Header */}
       <header className="pt-12 pb-10 max-w-2xl lg:pt-16">
         <Reveal>
@@ -113,6 +138,9 @@ export default function StoryPage() {
         </section>
       ) : null}
 
+      {/* ------------------------------------------------ Divider */}
+      <DividerGlyph />
+
       {/* ------------------------------------------------ The craft */}
       {craft ? (
         <section aria-labelledby="craft-heading" className="pb-16 lg:pb-24">
@@ -151,6 +179,9 @@ export default function StoryPage() {
         </section>
       ) : null}
 
+      {/* ------------------------------------------------ Divider */}
+      <DividerGlyph />
+
       {/* ------------------------------------------------ The founders */}
       {founders ? (
         <section aria-labelledby="founders-heading" className="pb-16 lg:pb-24">
@@ -185,6 +216,16 @@ export default function StoryPage() {
               </li>
             ))}
           </ul>
+
+          {/* Owner reply — verbatim voice anchor (DESIGN.md Voice & Copy) */}
+          <figure className="mt-8 max-w-2xl border-l-2 border-caramel/60 pl-5">
+            <blockquote className="text-base italic leading-relaxed text-cocoa">
+              &ldquo;{ownerVoiceLine}&rdquo;
+            </blockquote>
+            <figcaption className="label-caps mt-2 text-caramel">
+              The caf&eacute;&rsquo;s own reply to a guest review
+            </figcaption>
+          </figure>
         </section>
       ) : null}
 

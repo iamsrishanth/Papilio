@@ -166,7 +166,8 @@ export function MenuExplorer() {
   }, [searchParams]);
 
   // Shareable state: keep the address bar in sync without creating
-  // history entries (replaceState, not router.push).
+  // history entries (replaceState, not router.push). Preserves any
+  // category hash (#coffee) so filtered deep links stay shareable too.
   React.useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams();
@@ -174,10 +175,11 @@ export function MenuExplorer() {
     if (signatureOnly) params.set("signature", "1");
     if (query.trim()) params.set("q", query.trim().slice(0, QUERY_MAX));
     const qs = params.toString();
+    const suffix = qs ? `?${qs}` : "";
     window.history.replaceState(
       null,
       "",
-      qs ? `${window.location.pathname}?${qs}` : window.location.pathname
+      `${window.location.pathname}${suffix}${window.location.hash}`
     );
   }, [filter, signatureOnly, query]);
 
@@ -252,23 +254,60 @@ export function MenuExplorer() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const scrollTo = React.useCallback((id: string) => {
-    const el = sectionEls.current.get(id);
-    if (!el || el.offsetParent === null) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
-      .matches;
-    // Phase 1: instant jump — forces content-visibility sections near the
-    // target to render at their true size (skipped sections report
-    // placeholder intrinsic sizes, which would make a direct smooth
-    // scroll overshoot).
-    el.scrollIntoView({ behavior: "auto", block: "start" });
-    // Phase 2: read the now-stable position and glide to the exact offset.
-    requestAnimationFrame(() => {
-      const y =
-        el.getBoundingClientRect().top + window.scrollY - 112; // sticky header + rail
-      window.scrollTo({ top: Math.max(0, y), behavior: reduced ? "auto" : "smooth" });
-    });
-  }, []);
+  const scrollTo = React.useCallback(
+    (id: string, instant = false) => {
+      const el = sectionEls.current.get(id);
+      if (!el || el.offsetParent === null) return;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+        .matches;
+      // Phase 1: instant jump — forces content-visibility sections near the
+      // target to render at their true size (skipped sections report
+      // placeholder intrinsic sizes, which would make a direct smooth
+      // scroll overshoot).
+      el.scrollIntoView({ behavior: "auto", block: "start" });
+      // Phase 2: read the now-stable position and glide to the exact offset.
+      requestAnimationFrame(() => {
+        const y =
+          el.getBoundingClientRect().top + window.scrollY - 112; // sticky header + rail
+        window.scrollTo({
+          top: Math.max(0, y),
+          behavior: instant || reduced ? "auto" : "smooth",
+        });
+      });
+      // Keep the category in the URL (shareable #anchor). replaceState does
+      // not fire hashchange, so no loop with the listener below.
+      const qs = window.location.search;
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${qs}#${id}`
+      );
+    },
+    []
+  );
+
+  // Category anchors: /menu#coffee (deep link from other pages or the
+  // address bar). Applies on mount and on hashchange. Because
+  // content-visibility settles sizes lazily, the first correction can
+  // still overshoot on a cold load — re-align on short timers.
+  const reAlignTimers = React.useRef<ReturnType<typeof setTimeout>[]>([]);
+  React.useEffect(() => {
+    const applyHash = () => {
+      const id = window.location.hash.replace(/^#/, "");
+      if (!id || !menu.some((c) => c.id === id)) return;
+      requestAnimationFrame(() => requestAnimationFrame(() => scrollTo(id)));
+      for (const t of reAlignTimers.current) clearTimeout(t);
+      reAlignTimers.current = [300, 700, 1400].map((delay) =>
+        setTimeout(() => scrollTo(id, true), delay)
+      );
+    };
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => {
+      window.removeEventListener("hashchange", applyHash);
+      for (const t of reAlignTimers.current) clearTimeout(t);
+    };
+  }, [scrollTo]);
 
   const registerSection = React.useCallback(
     (id: string) => (el: HTMLElement | null) => {
@@ -338,6 +377,7 @@ export function MenuExplorer() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder={`Search ${totalItems} items — try "paneer" or "coffee"`}
               aria-label="Search the menu by dish name"
+              aria-keyshortcuts="/"
               className="h-12 w-full rounded-[12px] border border-linen bg-white pl-11 pr-11 text-sm text-espresso placeholder:text-cocoa/60 focus:border-caramel focus:outline-none focus:ring-2 focus:ring-caramel/25"
             />
             {query ? (

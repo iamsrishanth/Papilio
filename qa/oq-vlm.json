@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "Yes to both 1 and 2. No defects found.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788905925,
+  "id": "2026090906184026aa26d03f3f4e88",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "2026090906184026aa26d03f3f4e88",
+  "usage": {
+    "completion_tokens": 14,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1300,
+    "prompt_tokens_details": {
+      "cached_tokens": 2
+    },
+    "total_tokens": 1314
+  }
+}

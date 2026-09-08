@@ -7,6 +7,8 @@ import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
 import { CtaButton } from "@/components/site/cta-button";
 import { Reveal } from "@/components/site/reveal";
 import { DishCard } from "@/components/menu/dish-card";
+import { JsonLd } from "@/components/site/json-ld";
+import { breadcrumbLd } from "@/lib/seo";
 import { menu, type MenuItem } from "@/content/menu";
 import { site, whatsappLink, whatsappMessages } from "@/content/site";
 
@@ -57,13 +59,21 @@ export const metadata: Metadata = {
     description:
       "Cakes, custom celebration orders and gifting from our patisserie counter in Hanamkonda, Warangal.",
     url: "/patisserie",
-    images: ["/images/og-cover-lockup.png"],
+    images: [
+      {
+        url: "/images/og-patisserie.png",
+        width: 1344,
+        height: 768,
+        alt: "The Papilio patisserie counter with macarons, tarts, éclairs and a chocolate cream cake",
+      },
+    ],
   },
 };
 
 export default function PatisseriePage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <JsonLd data={breadcrumbLd([{ name: "Patisserie", path: "/patisserie" }])} />
       {/* ------------------------------------------------ Header */}
       <header className="relative pt-12 pb-10 max-w-2xl lg:pt-16">
         <ButterflyGlyph
@@ -112,6 +122,7 @@ export default function PatisseriePage() {
                 image={patisserieImages[item.name]}
                 priority={i === 0}
                 className="h-full"
+                href={`/menu?q=${encodeURIComponent(item.name)}`}
               />
             </Reveal>
           ))}
@@ -119,7 +130,7 @@ export default function PatisseriePage() {
 
         <div className="mt-8">
           <Link
-            href="/menu"
+            href="/menu#counter-desserts"
             className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel underline-offset-4 hover:underline"
           >
             See every dessert on the full menu
