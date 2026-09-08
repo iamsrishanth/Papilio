@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Bike, UtensilsCrossed } from "lucide-react";
+import { Bike, Printer, Search, UtensilsCrossed, X } from "lucide-react";
 import {
   menu,
   menuNote,
+  totalItems,
   type MenuCategory,
   type MenuItem,
 } from "@/content/menu";
@@ -43,7 +44,12 @@ const filters: Filter[] = ["all", "veg", "nonveg", "egg"];
 /** Menu item row — FSSAI glyph, name, dotted leader, verified price only. */
 function MenuRow({ item, dark = false }: { item: MenuItem; dark?: boolean }) {
   return (
-    <div className="group/menu">
+    <div
+      className={cn(
+        "group/menu rounded-[10px] px-2 py-1.5 -mx-2 transition-colors",
+        dark ? "hover:bg-cream/5" : "hover:bg-linen/30"
+      )}
+    >
       <div className="flex items-baseline gap-2.5">
         {dark ? (
           /* Glyph marker stays on an ivory chip for recognisability on espresso */
@@ -119,14 +125,27 @@ function MenuRow({ item, dark = false }: { item: MenuItem; dark?: boolean }) {
 
 export function MenuExplorer() {
   const [filter, setFilter] = React.useState<Filter>("all");
+  const [query, setQuery] = React.useState("");
   const [active, setActive] = React.useState<string>(menu[0].id);
   const sectionEls = React.useRef<Map<string, HTMLElement>>(new Map());
+  const railRef = React.useRef<HTMLDivElement>(null);
+  const searchRef = React.useRef<HTMLInputElement>(null);
 
-  const matches = (item: MenuItem) =>
-    filter === "all" || item.diet === filter;
+  const q = query.trim().toLowerCase();
 
-  const visibleCount = (cat: MenuCategory) =>
-    cat.items.filter(matches).length;
+  const matches = (item: MenuItem) => {
+    if (filter !== "all" && item.diet !== filter) return false;
+    if (!q) return true;
+    const haystack = `${item.name} ${item.d ?? ""} ${item.allergen ?? ""}`.toLowerCase();
+    return haystack.includes(q);
+  };
+
+  // Derived once per render — 187 items, negligible cost.
+  const sections = menu.map((cat) => ({
+    cat,
+    items: cat.items.filter(matches),
+  }));
+  const totalCount = sections.reduce((s, x) => s + x.items.length, 0);
 
   // Scroll-spy
   React.useEffect(() => {
@@ -143,6 +162,21 @@ export function MenuExplorer() {
     for (const el of sectionEls.current.values()) observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  // Keep the active chip scrolled into view in the mobile rail
+  React.useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return;
+    const chip = rail.querySelector<HTMLButtonElement>(
+      `button[data-rail-id="${CSS.escape(active)}"]`
+    );
+    if (!chip) return;
+    const target =
+      chip.offsetLeft - rail.clientWidth / 2 + chip.clientWidth / 2;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches;
+    rail.scrollTo({ left: Math.max(0, target), behavior: reduced ? "auto" : "smooth" });
+  }, [active]);
 
   const scrollTo = React.useCallback((id: string) => {
     const el = sectionEls.current.get(id);
@@ -175,19 +209,23 @@ export function MenuExplorer() {
       {/* ---------------------------------------------- Category rail */}
       <nav
         aria-label="Menu categories"
-        className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pb-4"
+        className="no-print lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pb-4"
       >
         {/* Mobile: horizontal chip rail under the header */}
-        <div className="sticky top-16 z-30 -mx-4 border-b border-linen/70 bg-cream/95 px-4 py-2.5 backdrop-blur-md lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none">
+        <div
+          ref={railRef}
+          className="sticky top-16 z-30 -mx-4 border-b border-linen/70 bg-cream/95 px-4 py-2.5 backdrop-blur-md lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:py-0 lg:backdrop-blur-none"
+        >
           <ul className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:pb-0">
-            {menu.map((cat) => {
-              const n = visibleCount(cat);
+            {sections.map(({ cat, items: catItems }) => {
+              const n = catItems.length;
               const empty = n === 0;
               const isActive = active === cat.id;
               return (
                 <li key={cat.id} className="lg:list-none">
                   <button
                     type="button"
+                    data-rail-id={cat.id}
                     onClick={() => scrollTo(cat.id)}
                     aria-current={isActive ? "true" : undefined}
                     disabled={empty}
@@ -212,38 +250,100 @@ export function MenuExplorer() {
 
       {/* ---------------------------------------------- Sections */}
       <div>
-        {/* Diet filter chips */}
-        <div
-          role="group"
-          aria-label="Filter by dietary preference"
-          className="mb-8 flex flex-wrap items-center gap-2"
-        >
-          {filters.map((f) => {
-            const isOn = filter === f;
-            return (
+        {/* Search + diet filter chips */}
+        <div className="no-print mb-8 space-y-4">
+          <div role="search" aria-label="Search the menu" className="relative max-w-md">
+            <Search
+              className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-cocoa/60"
+              aria-hidden="true"
+            />
+            <input
+              ref={searchRef}
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={`Search ${totalItems} items — try "paneer" or "coffee"`}
+              aria-label="Search the menu by dish name"
+              className="h-12 w-full rounded-[12px] border border-linen bg-white pl-11 pr-11 text-sm text-espresso placeholder:text-cocoa/60 focus:border-caramel focus:outline-none focus:ring-2 focus:ring-caramel/25"
+            />
+            {query ? (
               <button
-                key={f}
                 type="button"
-                onClick={() => setFilter(f)}
-                aria-pressed={isOn}
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-pill border px-4 py-2 text-sm font-medium transition-colors",
-                  isOn
-                    ? "border-espresso bg-espresso text-cream"
-                    : "border-linen bg-ivory text-cocoa hover:border-caramel hover:text-caramel"
-                )}
+                onClick={() => {
+                  setQuery("");
+                  searchRef.current?.focus();
+                }}
+                aria-label="Clear search"
+                className="absolute right-2.5 top-1/2 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-pill text-cocoa/70 transition-colors hover:bg-linen/60 hover:text-caramel"
               >
-                {f !== "all" ? <VegGlyph kind={f} /> : null}
-                {filterLabels[f]}
-                <span className="tnum text-xs opacity-70">{counts[f]}</span>
+                <X className="size-4" aria-hidden="true" />
               </button>
-            );
-          })}
+            ) : null}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <div
+              role="group"
+              aria-label="Filter by dietary preference"
+              className="flex flex-wrap items-center gap-2"
+            >
+              {filters.map((f) => {
+                const isOn = filter === f;
+                return (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setFilter(f)}
+                    aria-pressed={isOn}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-pill border px-4 py-2 text-sm font-medium transition-colors",
+                      isOn
+                        ? "border-espresso bg-espresso text-cream"
+                        : "border-linen bg-ivory text-cocoa hover:border-caramel hover:text-caramel"
+                    )}
+                  >
+                    {f !== "all" ? <VegGlyph kind={f} /> : null}
+                    {filterLabels[f]}
+                    <span className="tnum text-xs opacity-70">{counts[f]}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <p
+              aria-live="polite"
+              className="tnum ml-1 text-sm text-cocoa/80"
+            >
+              {totalCount} of {totalItems} items
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          {menu.map((cat) => {
-            const items = cat.items.filter(matches);
+        <div className="space-y-6 print:space-y-4">
+          {totalCount === 0 ? (
+            <div className="rounded-card border border-dashed border-linen bg-ivory p-10 text-center">
+              <p className="font-display text-h3 font-medium text-espresso">
+                Nothing matches that search
+              </p>
+              <p className="mt-2 text-sm text-cocoa">
+                Try a shorter word — &ldquo;paneer&rdquo;, &ldquo;coffee&rdquo;,
+                &ldquo;pasta&rdquo; — or clear the filters.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setFilter("all");
+                }}
+                className="mt-5 inline-flex items-center gap-2 rounded-pill border border-linen bg-cream px-5 py-2.5 text-sm font-semibold text-caramel transition-colors hover:border-caramel"
+              >
+                <X className="size-4" aria-hidden="true" />
+                Clear search &amp; filters
+              </button>
+            </div>
+          ) : null}
+
+          {sections.map(({ cat, items }) => {
             const dark = cat.id === "coffee"; // espresso coffee band w/ steam
             if (items.length === 0) return null;
             return (
@@ -253,19 +353,23 @@ export function MenuExplorer() {
                 ref={registerSection(cat.id)}
                 aria-labelledby={`${cat.id}-heading`}
                 className={cn(
-                  "cv-auto scroll-mt-28 rounded-card p-6 sm:p-8",
+                  "cv-auto scroll-mt-28 rounded-card p-6 sm:p-8 print:shadow-none",
                   dark
-                    ? "relative overflow-hidden bg-surface-espresso shadow-lift"
-                    : "bg-ivory shadow-card"
+                    ? "relative overflow-hidden bg-surface-espresso shadow-lift print:bg-white"
+                    : "bg-ivory shadow-card print:bg-white print:border print:border-linen"
                 )}
               >
-                {dark ? <SteamBand /> : null}
+                {dark ? (
+                  <div className="print:hidden">
+                    <SteamBand />
+                  </div>
+                ) : null}
                 <div className="relative">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <h2
                       id={`${cat.id}-heading`}
                       className={cn(
-                        "font-display text-h3 font-medium",
+                        "font-display text-h3 font-medium print:text-espresso",
                         dark ? "text-butter" : "text-espresso"
                       )}
                     >
@@ -273,7 +377,7 @@ export function MenuExplorer() {
                     </h2>
                     <span
                       className={cn(
-                        "label-caps",
+                        "label-caps print:text-cocoa",
                         dark ? "text-cream/60" : "text-cocoa/70"
                       )}
                     >
@@ -283,7 +387,7 @@ export function MenuExplorer() {
                   {cat.note ? (
                     <p
                       className={cn(
-                        "mt-1 text-xs",
+                        "mt-1 text-xs print:text-cocoa",
                         dark ? "text-cream/55" : "text-cocoa/70"
                       )}
                     >
@@ -293,8 +397,8 @@ export function MenuExplorer() {
 
                   <div
                     className={cn(
-                      "mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2 xl:grid-cols-3",
-                      dark ? "text-cream" : ""
+                      "mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2 xl:grid-cols-3 print:grid-cols-2 print:gap-x-6",
+                      dark ? "text-cream print:text-espresso" : ""
                     )}
                   >
                     {items.map((item) => (
@@ -308,7 +412,7 @@ export function MenuExplorer() {
         </div>
 
         {/* Note + platform deep links */}
-        <div className="mt-10 rounded-card bg-linen/40 p-6 sm:p-8">
+        <div className="mt-10 rounded-card bg-linen/40 p-6 sm:p-8 print:hidden">
           <p className="flex items-start gap-2.5 text-sm leading-relaxed text-cocoa">
             <UtensilsCrossed
               className="mt-0.5 size-4 shrink-0 text-caramel"
@@ -326,6 +430,14 @@ export function MenuExplorer() {
             <CtaButton variant="secondary" href={links.zomato}>
               Order on Zomato
             </CtaButton>
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-2 rounded-pill px-4 py-3 text-sm font-semibold text-caramel underline-offset-4 hover:underline"
+            >
+              <Printer className="size-4" aria-hidden="true" />
+              Print the menu
+            </button>
             <span className="text-sm text-cocoa/80">
               {site.costForTwo.delivery}
             </span>

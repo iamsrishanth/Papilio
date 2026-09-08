@@ -4,6 +4,7 @@ import "./globals.css";
 import { SkipLink } from "@/components/site/skip-link";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
+import { BackToTop } from "@/components/site/back-to-top";
 import { site, links, SITE_URL } from "@/content/site";
 
 const playfair = Playfair_Display({
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "/images/og-cover.png",
+        url: "/images/og-cover-lockup.png",
         width: 1440,
         height: 720,
         alt: "The Papilio swallowtail butterfly glyph on a warm cream-to-espresso backdrop",
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
     title: "Papilio — Patisserie | Café in Hanamkonda, Warangal",
     description:
       "A cozy, aesthetic, premium patisserie-café in Excise Colony, Hanamkonda. Rated 4.3★ by 1,300+ diners.",
-    images: ["/images/og-cover.png"],
+    images: ["/images/og-cover-lockup.png"],
   },
 };
 
@@ -78,7 +79,7 @@ const jsonLd = {
     "Patisserie-led café in Excise Colony, Hanamkonda — cakes, counter desserts, coffee, pizza, pasta and continental fare.",
   url: SITE_URL,
   telephone: site.phone,
-  image: `${SITE_URL}/images/og-cover.png`,
+  image: `${SITE_URL}/images/og-cover-lockup.png`,
   priceRange: "₹₹",
   servesCuisine: [...site.cuisines],
   address: {
@@ -136,6 +137,7 @@ export default function RootLayout({
           </main>
           <SiteFooter />
         </div>
+        <BackToTop />
       </body>
     </html>
   );

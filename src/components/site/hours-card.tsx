@@ -1,5 +1,6 @@
 import { Clock, Phone } from "lucide-react";
 import { site, links } from "@/content/site";
+import { OpenNowBadge } from "@/components/site/open-now-badge";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,6 +22,7 @@ export function HoursCard({ className }: { className?: string }) {
         {site.hours.display}
       </p>
       <p className="mt-1 text-sm text-cocoa">{site.hours.days}</p>
+      <OpenNowBadge variant="line" className="mt-3" />
       <p className="mt-4 text-sm leading-relaxed text-cocoa/80">
         {site.hours.note}
       </p>

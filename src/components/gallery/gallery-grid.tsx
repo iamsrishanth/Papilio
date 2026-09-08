@@ -37,7 +37,7 @@ export function GalleryGrid({
                 alt={photo.alt}
                 width={photo.width}
                 height={photo.height}
-                priority={index === 0}
+                priority={index < 2}
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 className="h-auto w-full rounded-card object-cover transition-transform duration-500 ease-out group-hover:-translate-y-1 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:transition-none"
               />

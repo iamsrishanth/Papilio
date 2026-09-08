@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sheet";
 import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
 import { CtaButton } from "@/components/site/cta-button";
+import { OpenNowBadge } from "@/components/site/open-now-badge";
 import { navItems, site, links } from "@/content/site";
 import { cn } from "@/lib/utils";
 
@@ -61,8 +62,9 @@ export function SiteHeader() {
           })}
         </nav>
 
-        {/* Desktop CTA (secondary pill — the per-view primary lives in page content) */}
-        <div className="hidden md:block">
+        {/* Live status + desktop CTA (secondary pill — the per-view primary lives in page content) */}
+        <div className="hidden items-center gap-3 md:flex">
+          <OpenNowBadge className="hidden lg:inline-flex" />
           <CtaButton variant="secondary" href={links.swiggy} className="px-5 py-2.5">
             <Bike className="size-4" aria-hidden="true" />
             Order on Swiggy
@@ -110,6 +112,9 @@ export function SiteHeader() {
                 );
               })}
             </nav>
+            <div className="px-6 pb-2">
+              <OpenNowBadge />
+            </div>
             <div className="mt-auto space-y-3 border-t border-linen/70 px-6 py-6">
               <SheetClose asChild>
                 <CtaButton

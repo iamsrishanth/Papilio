@@ -5,6 +5,7 @@ import { ArrowRight, Instagram, MessageCircle, Quote } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
 import { CtaButton } from "@/components/site/cta-button";
+import { Reveal } from "@/components/site/reveal";
 import { DishCard } from "@/components/menu/dish-card";
 import { menu, type MenuItem } from "@/content/menu";
 import { site, whatsappLink, whatsappMessages } from "@/content/site";
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
     description:
       "Cakes, custom celebration orders and gifting from our patisserie counter in Hanamkonda, Warangal.",
     url: "/patisserie",
-    images: ["/images/og-cover.png"],
+    images: ["/images/og-cover-lockup.png"],
   },
 };
 
@@ -69,16 +70,18 @@ export default function PatisseriePage() {
           variant="line"
           className="absolute right-0 top-14 hidden size-14 animate-drift sm:block"
         />
-        <SectionEyebrow>Patisserie</SectionEyebrow>
-        <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">
-          Patisserie
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-cocoa">
-          Cakes and gifting are the standing highlights of our own Instagram
-          feed. On the menu, that half of Papilio shows up as{" "}
-          {counterDesserts.length} counter desserts and {cakes.length} whole
-          cakes — this page is a slow walk along that counter.
-        </p>
+        <Reveal>
+          <SectionEyebrow>Patisserie</SectionEyebrow>
+          <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">
+            Patisserie
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-cocoa">
+            Cakes and gifting are the standing highlights of our own Instagram
+            feed. On the menu, that half of Papilio shows up as{" "}
+            {counterDesserts.length} counter desserts and {cakes.length} whole
+            cakes — this page is a slow walk along that counter.
+          </p>
+        </Reveal>
       </header>
 
       {/* ------------------------------------------------ Signature cakes & counter desserts */}
@@ -103,12 +106,14 @@ export default function PatisseriePage() {
 
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {featuredItems.map((item, i) => (
-            <DishCard
-              key={item.name}
-              item={item}
-              image={patisserieImages[item.name]}
-              priority={i === 0}
-            />
+            <Reveal key={item.name} delay={i * 0.06} className="h-full">
+              <DishCard
+                item={item}
+                image={patisserieImages[item.name]}
+                priority={i === 0}
+                className="h-full"
+              />
+            </Reveal>
           ))}
         </div>
 
@@ -131,7 +136,8 @@ export default function PatisseriePage() {
         aria-labelledby="custom-heading"
         className="pb-16 lg:pb-24"
       >
-        <div className="relative overflow-hidden rounded-card bg-surface-espresso p-8 text-cream shadow-card sm:p-10 lg:p-12">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-card bg-surface-espresso p-8 text-cream shadow-card sm:p-10 lg:p-12">
           {/* butter wing glow — CSS-only ambience */}
           <div
             aria-hidden="true"
@@ -169,7 +175,8 @@ export default function PatisseriePage() {
               </CtaButton>
             </div>
           </div>
-        </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ------------------------------------------------ Gifting */}

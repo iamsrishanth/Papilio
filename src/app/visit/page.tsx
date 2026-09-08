@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bike, Check, Instagram, MapPin, MessageCircle, Phone } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { CtaButton } from "@/components/site/cta-button";
+import { Reveal } from "@/components/site/reveal";
 import { HoursCard } from "@/components/site/hours-card";
 import { MapEmbed } from "@/components/site/map-embed";
 import { site, links, whatsappLink, whatsappMessages } from "@/content/site";
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     description:
       "Find us in Excise Colony, Hanamkonda — open daily 8:00 AM to 10:30 PM, with dine-in, takeaway and delivery.",
     url: "/visit",
-    images: ["/images/og-cover.png"],
+    images: ["/images/og-cover-lockup.png"],
   },
 };
 
@@ -25,14 +26,16 @@ export default function VisitPage() {
     <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
       {/* ------------------------------------------------ Header */}
       <header className="pt-12 pb-10 max-w-2xl lg:pt-16">
-        <SectionEyebrow>Visit</SectionEyebrow>
-        <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">
-          Visit us
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-cocoa">
-          We are at {site.address.line1}, Hanamkonda — open all seven days,{" "}
-          {site.hours.display}. Dine-in, takeaway and delivery.
-        </p>
+        <Reveal>
+          <SectionEyebrow>Visit</SectionEyebrow>
+          <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">
+            Visit us
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-cocoa">
+            We are at {site.address.line1}, Hanamkonda — open all seven days,{" "}
+            {site.hours.display}. Dine-in, takeaway and delivery.
+          </p>
+        </Reveal>
       </header>
 
       {/* ------------------------------------------------ Address + map */}

@@ -127,3 +127,32 @@ Unresolved risks / next-phase recommendations (for the webDevReview cron agent):
 3. Add page-transition animations (framer-motion, subtle fade/slide) and scroll-reveal for section headers — polish tier.
 4. Consider a compact "hours + open now" indicator in the header on mobile.
 5. OG image could get a wordmark lockup variant; current og-cover.png is the butterfly poster.
+
+---
+Task ID: 11 (webDevReview round 1)
+Agent: Z.ai Code (main)
+Task: Scheduled review round — baseline QA, then new features (open/closed status, menu search, back-to-top, printable menu, scroll reveals, OG lockup) + styling polish.
+
+Work Log:
+- Baseline: all 6 routes 200, zero console/page errors, dev.log clean. Project stable → moved to feature/polish tier per the round mandate.
+- NEW FEATURE — OpenNowBadge (src/components/site/open-now-badge.tsx): live open/closed status computed from the VERIFIED hours (site.hours, 08:00–22:30) in the café's timezone (Asia/Kolkata via Intl), refreshed every minute, aria-live, dot + text (caramel dot pulse when open — palette-pure, no second hue). Hydration-safe: server renders a static always-true fallback, status resolves after mount. Wired into: desktop header (lg+), mobile Sheet, and HoursCard (line variant — covers home visit band + /visit).
+- NEW FEATURE — menu search (menu-explorer.tsx): search input (DESIGN input-field spec: white bg, linen border, 12px radius, caramel focus ring) over the 187 items, combining with the diet filter; aria-live result counter ("12 of 187 items"); clear button; friendly empty state with "Clear search & filters" action; rail counts update live. Verified: "paneer" → 12 items across 6 sections; nonsense query → empty state; clear → 21 sections restored.
+- NEW FEATURE — BackToTop (src/components/site/back-to-top.tsx, in root layout): espresso pill with butter ChevronUp (butter-on-espresso legal), appears after 600px scroll (rAF-throttled passive listener), smooth scroll to top (instant under reduced motion), aria-hidden + tabIndex managed when invisible, no-print. Verified: hidden at top → visible at 2000px → click returns to 0.
+- NEW FEATURE — printable menu: @media print stylesheet in globals.css (hides header/footer/rail/filters via .no-print, forces content-visibility: visible so all 21 sections print, coffee band prints light to save ink, 1pt linen borders, break-inside: avoid, links de-styled) + "Print the menu" button (window.print) in the menu note box. Tailwind print: variants on grids (2 columns) and steam (hidden).
+- STYLING — scroll reveals: new Reveal component (framer-motion whileInView fade-up 18px/500ms/once, viewport margin -60px) with useReducedMotion → static render. Applied to home (signature header + 4 staggered dish cards, ratings band, patisserie teaser columns, visit band columns), patisserie (header, 9 staggered cards, custom-cake band), visit/gallery/story page headers. NOT applied to the hero (LCP), the 3D canvas, or the WingUnfold scroll zone.
+- STYLING — menu row hover polish (rounded hover bg, linen/30 light + cream/5 on the dark band) and mobile rail auto-scrolls the active chip into view (manual scrollLeft centering, reduced-motion aware).
+- NEW ASSET — OG wordmark lockup (public/images/og-cover-lockup.png): generated via image CLI, spelling verified by VLM letter-by-letter (P-A-P-I-L-I-O, butterfly, warm cream). All OG/Twitter references + JSON-LD image swapped to the lockup (sed across 6 files); original og-cover.png kept as spare.
+- BUGS FIXED this round: (1) JSX unclosed-div errors in page.tsx/patisserie from the Reveal wrapping (2 spots); (2) React Compiler "memoization could not be preserved" on the search useMemo — replaced with direct per-render derivation of sections/totalCount (187 items, negligible); (3) header overflowed by 83px at 768px with the new badge — badge now lg+ only (mobile keeps it in the Sheet); (4) gallery LCP warning — priority extended to first 2 masonry photos (tall second image is above the fold in 2-col mobile layout).
+- QA: lint exit 0; all routes + sitemap + robots 200; console sweep clean after fixes; OpenNowBadge verified live ("Closed · opens 8:00 AM" — correct for ~4 AM IST test time, plus mobile Sheet variant); search/empty-state/clear verified; back-to-top verified; reveals verified (framer style resolves to opacity:1; reduced-motion renders static divs, canvas 0); VLM review of the desktop state: no defects.
+
+Stage Summary:
+- Features added: live open/closed status (header, Sheet, HoursCard), 187-item menu search with combined diet filtering + empty state, back-to-top, printable menu with print stylesheet, scroll reveals, mobile rail auto-scroll, row hover polish, verified OG wordmark lockup.
+- All contracts preserved: one primary CTA per view, butter only on espresso, palette-pure status colors, no fabricated facts (status derived from verified hours only), reduced-motion honored everywhere (badge pulse killed by global rule, reveals static, back-to-top instant).
+- Zero regressions: menu two-phase scroll, lightbox, WingUnfold, 3D contracts all still pass.
+
+Unresolved risks / next-phase recommendations:
+1. Lighthouse CI (mobile perf ≥ 85 with Scene A) — still needs a production build; forbidden in this sandbox.
+2. Consider an "Order on Zomato" link in the header CTA area on wide screens (Swiggy only today, per the one-filled-CTA rule).
+3. Menu search could gain bestseller/flagship shortcuts (chips like "Bestsellers", "Under ₹400") — all derivable from verified data.
+4. The story timeline could animate its dots filling as they enter view (progress-linked reveal).
+5. Real-device QA of the 3D hero on low-end Android remains open.

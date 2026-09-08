@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "From focaccia sandwiches to filter coffee and counter desserts — the full menu of our Hanamkonda patisserie-café.",
     url: "/menu",
-    images: ["/images/og-cover.png"],
+    images: ["/images/og-cover-lockup.png"],
   },
 };
 

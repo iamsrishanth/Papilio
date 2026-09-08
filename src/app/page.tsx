@@ -12,6 +12,7 @@ import { HeroSection } from "@/components/hero/hero-section";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { RatingChip } from "@/components/site/rating-chip";
 import { CtaButton } from "@/components/site/cta-button";
+import { Reveal } from "@/components/site/reveal";
 import { DishCard } from "@/components/menu/dish-card";
 import { HoursCard } from "@/components/site/hours-card";
 import { site, links, whatsappLink, whatsappMessages } from "@/content/site";
@@ -56,7 +57,7 @@ export default function HomePage() {
         aria-labelledby="signature-heading"
         className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
       >
-        <div className="max-w-2xl">
+        <Reveal className="max-w-2xl">
           <SectionEyebrow>From the kitchen</SectionEyebrow>
           <h2
             id="signature-heading"
@@ -68,15 +69,17 @@ export default function HomePage() {
             The plates our diners keep coming back for — priced as listed on
             Swiggy.
           </p>
-        </div>
+        </Reveal>
 
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {signatureItems.map((item) => (
-            <DishCard
-              key={item.name}
-              item={item}
-              image={signatureImages[item.name]}
-            />
+          {signatureItems.map((item, i) => (
+            <Reveal key={item.name} delay={i * 0.07} className="h-full">
+              <DishCard
+                item={item}
+                image={signatureImages[item.name]}
+                className="h-full"
+              />
+            </Reveal>
           ))}
         </div>
 
@@ -99,7 +102,8 @@ export default function HomePage() {
         aria-labelledby="ratings-heading"
         className="mx-auto w-full max-w-[1200px] px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24"
       >
-        <div className="card-dark relative overflow-hidden rounded-card bg-surface-espresso p-8 text-cream sm:p-10 lg:p-12">
+        <Reveal>
+          <div className="card-dark relative overflow-hidden rounded-card bg-surface-espresso p-8 text-cream sm:p-10 lg:p-12">
           {/* butter wing accent — the one decorative curve per page */}
           <div
             aria-hidden="true"
@@ -169,7 +173,8 @@ export default function HomePage() {
               </CtaButton>
             </div>
           </div>
-        </div>
+          </div>
+        </Reveal>
       </section>
 
       {/* ------------------------------------------------ Patisserie teaser */}
@@ -178,8 +183,7 @@ export default function HomePage() {
         className="mx-auto w-full max-w-[1200px] px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24"
       >
         <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
-          {/* Wing-teardrop corner mask — the one decorative curve */}
-          <div className="relative min-h-[280px] overflow-hidden rounded-card lg:col-span-7">
+          <Reveal className="relative min-h-[280px] overflow-hidden rounded-card lg:col-span-7">
             <Image
               src="/images/patisserie-signature-cake.png"
               alt="Chocolate truffle cream cake with whipped cream swirls from the Papilio patisserie counter"
@@ -187,9 +191,9 @@ export default function HomePage() {
               sizes="(max-width: 1024px) 100vw, 58vw"
               className="object-cover rounded-tl-card rounded-tr-card rounded-bl-card rounded-br-[110px]"
             />
-          </div>
+          </Reveal>
 
-          <div className="flex flex-col justify-center rounded-card bg-linen/50 p-8 lg:col-span-5 lg:p-10">
+          <Reveal delay={0.1} className="flex flex-col justify-center rounded-card bg-linen/50 p-8 lg:col-span-5 lg:p-10">
             <SectionEyebrow className="bg-ivory">Patisserie</SectionEyebrow>
             <h2
               id="patisserie-heading"
@@ -218,7 +222,7 @@ export default function HomePage() {
                 WhatsApp us for custom cakes
               </a>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -229,7 +233,7 @@ export default function HomePage() {
       >
         <div className="rounded-card bg-linen/40 p-8 sm:p-10 lg:p-12">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
-            <div className="lg:col-span-7">
+            <Reveal className="lg:col-span-7">
               <SectionEyebrow className="bg-ivory">Visit</SectionEyebrow>
               <h2
                 id="visit-heading"
@@ -255,10 +259,10 @@ export default function HomePage() {
                   <ArrowRight className="size-4" aria-hidden="true" />
                 </CtaButton>
               </div>
-            </div>
-            <div className="lg:col-span-5">
+            </Reveal>
+            <Reveal delay={0.1} className="lg:col-span-5">
               <HoursCard />
-            </div>
+            </Reveal>
           </div>
         </div>
       </section>

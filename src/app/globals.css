@@ -245,3 +245,44 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Print — the menu prints as a clean two-column sheet                */
+/* ------------------------------------------------------------------ */
+@media print {
+  .no-print,
+  header,
+  footer {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  /* content-visibility must be off so every section prints */
+  .cv-auto {
+    content-visibility: visible !important;
+    contain-intrinsic-size: auto !important;
+  }
+
+  section[id] {
+    box-shadow: none !important;
+    background: #ffffff !important;
+    border: 1pt solid #e8dfc8;
+    break-inside: avoid;
+  }
+
+  /* The espresso coffee band prints light to save ink */
+  section[id] h2,
+  section[id] h3,
+  section[id] p,
+  section[id] span {
+    color: #2a1b10 !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+}

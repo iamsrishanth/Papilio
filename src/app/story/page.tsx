@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Quote } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
+import { Reveal } from "@/components/site/reveal";
 import { WingUnfold } from "@/components/story/wing-unfold";
 import {
   storyIntro,
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     description:
       "From chrysalis to butterfly: the story of Papilio, a patisserie-led café in Excise Colony, Hanamkonda.",
     url: "/story",
-    images: ["/images/og-cover.png"],
+    images: ["/images/og-cover-lockup.png"],
   },
 };
 
@@ -52,15 +53,17 @@ export default function StoryPage() {
     <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
       {/* ------------------------------------------------ Header */}
       <header className="pt-12 pb-10 max-w-2xl lg:pt-16">
-        <SectionEyebrow>Our story</SectionEyebrow>
-        <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">
-          From chrysalis to butterfly
-        </h1>
-        {storyIntro.map((paragraph) => (
-          <p key={paragraph} className="mt-4 text-base leading-relaxed text-cocoa">
-            {paragraph}
-          </p>
-        ))}
+        <Reveal>
+          <SectionEyebrow>Our story</SectionEyebrow>
+          <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">
+            From chrysalis to butterfly
+          </h1>
+          {storyIntro.map((paragraph) => (
+            <p key={paragraph} className="mt-4 text-base leading-relaxed text-cocoa">
+              {paragraph}
+            </p>
+          ))}
+        </Reveal>
       </header>
 
       {/* ------------------------------------------------ The room */}
