@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) **Yes.** There are four distinct dish cards, each containing a high-quality image (Chicken & Avocado Salad, Buttermilk Chicken Wrap, Cottage Crunch Wrap, Double Trouble Chicken Burger), the dish name, a description, and a price tag (₹376, ₹391, ₹335, ₹390).\n\n2) **Yes.** Below the cards, there are two text links: \"See the full menu — 21 sections, 187 items\" and \"Filter the menu to these four\". Both include small right-pointing arrows and are horizontally aligned on the same baseline without any overlap.\n\n3) **No layout defects detected.** The grid is evenly spaced, typography is consistent, and the alignment of all elements is clean and professional.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788905309,
+  "id": "20260909060826dd8ae06937484a7e",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "20260909060826dd8ae06937484a7e",
+  "usage": {
+    "completion_tokens": 159,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 1307,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 1466
+  }
+}

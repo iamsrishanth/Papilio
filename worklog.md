@@ -189,3 +189,33 @@ Unresolved risks / next-phase recommendations:
 3. Pre-production client tasks unchanged: production domain in content/site.ts SITE_URL, real menu import, real photography swap.
 4. The dev server may be reaped by the sandbox between rounds — restart with `setsid -f bun run dev > dev.log 2>&1 < /dev/null` and if port 3000 is held by a zombie next-server (99% CPU), kill -9 it + `rm -rf .next` first.
 5. Optional: remove framer-motion from package.json (now unused) or keep for future micro-interactions.
+
+---
+Task ID: 13 (webDevReview round 3)
+Agent: Z.ai Code (main)
+Task: Baseline QA, then feature round: /visit FAQ + FAQPage JSON-LD, deep-linkable menu filters, home→menu dish deep links, lightbox touch swipe, sonner toasts + Share-the-menu, editorial drop caps, LCP fix.
+
+Work Log:
+- Baseline QA (fresh agent-browser session): all 6 routes + sitemap/robots 200, zero console/page errors, 3D canvas mounts (1) on home and disposes (0) on /menu, no 390px overflow on any route. Project stable → feature/polish tier.
+- NEW FEATURE — FAQ on /visit: src/content/faq.ts (8 questions, every answer interpolated from content/site.ts values — hours, NAP, phone, booking/cake WhatsApp flows, facilities, delivery, cost-for-two, 173/187 veg counts) + FaqAccordion (shadcn/Radix accordion restyled: ivory card, linen hairlines, numbered 01/02 Playfair questions, caramel chevron) in a 12-col section (eyebrow/intro + accordion). FAQPage JSON-LD (8 Questions) injected on /visit only. Print CSS: accordion answers print expanded.
+- NEW FEATURE — deep-linkable menu: MenuExplorer now reads /menu?diet=veg|nonveg|egg&signature=1&q=… (useSearchParams; 60-char query cap; unknown values ignored) and writes filter state back via history.replaceState (no history entries). MenuExplorer wrapped in <Suspense> in menu/page.tsx with a menu-shaped skeleton fallback (required for useSearchParams under static rendering).
+- NEW FEATURE — home→menu deep links: DishCard gains optional href prop (wraps card in a next/link with "Find <dish> on the menu" aria-label; article unchanged, no new filled CTA); the 4 signature cards on / link to /menu?q=<dish> (verified end-to-end: click → exactly 1 item, verified price shown). New quiet text link "Filter the menu to these four" → /menu?signature=1 beside "See the full menu".
+- NEW FEATURE — lightbox touch swipe: PhotoLightbox onTouchStart/onTouchEnd on DialogContent — horizontal flick >48px with <64px vertical gate navigates (vertical drags keep scrolling); "Swipe to browse" hint (uppercase micro-label, mobile-only). Verified with dispatched TouchEvents: 1/11 → swipe-left → 2/11 → swipe-right → 1/11; ESC still closes.
+- NEW FEATURE — toast system: sonner <Toaster position="bottom-center"> in root layout (themed via popover tokens: ivory bg, espresso text, linen border) + new ShareButton component (navigator.share with AbortError pass-through → clipboard fallback incl. execCommand for non-secure contexts). "Share the menu" tertiary pill in the menu note box (no-print). Verified with stubbed clipboard: copies origin+/menu, toast "Link copied — …" renders on-palette (VLM-checked).
+- STYLING — editorial drop caps on /story: .drop-cap::first-letter (Playfair 600, caramel #9A5B1F, 3.3em, float) on the intro + room + craft chapter first paragraphs (3 total; never on dark surfaces). NOTE: Turbopack emits it as .drop-cap:first-letter (legacy single-colon — still valid; a stale CSS chunk in a long-lived browser session initially made it look missing — always hard-reload before judging). VLM: "large serif caramel initial, text wraps cleanly, elegant".
+- STYLING — global text-underline-offset: 3px on links (caramel underlines sit off the baseline consistently).
+- PERF — LCP fix: gallery-interior.png (room chapter figure) was the /story mobile LCP while lazy → now priority. LCP warnings zero across all routes after fix. (/gallery's first-2-priority from round 2 confirmed still effective; an old coffee-pour warning was stale console buffer.)
+- QA battery all green: lint exit 0; all routes + 404 + sitemap/robots 200; zero console/page errors in a fresh session (empty ✗ entries seen earlier were artifacts of synthetic touch/clipboard test stubs); typo quarantine zero hits on all 6 rendered pages; [CONFIRM/[PHOTO/[PRICE zero; NAP/FSSAI/phone/WA/hours consistent (tel: ×5, wa.me ×2, FSSAI ×4 on /visit); FAQ JSON-LD parses with 8 questions; deep links: ?diet=veg → "173 of 187", ?signature=1 → "4 of 187" exactly the 4 flagship dishes, ?q=paneer → 12 items, bogus ?diet=x ignored, URL syncs live while typing; drop caps 3× Playfair/caramel; reduced-motion: FAQ opens, reveals static (0 hidden), drop caps static, 0 canvases; mobile 390px: no overflow on / /menu /gallery /story /patisserie /visit; toast + share verified; home signature links row VLM-verified aligned.
+- Verified the 15-min webDevReview cron job is active (job 369406, fixed_rate 900s; last tick failed on model concurrency limit — infra-side, self-recovering).
+
+Stage Summary:
+- Round-3 features shipped: /visit FAQ (8 Q&A + FAQPage JSON-LD), deep-linkable & shareable menu filters, home signature dish cards as menu deep links, gallery lightbox touch swipe, sonner toast system with Share-the-menu, editorial story drop caps, underline-offset polish, /story LCP fix.
+- Contracts preserved: one filled primary CTA per view (share/print are tertiary pills), butter only on espresso surfaces, palette-pure styling everywhere, zero fabricated facts (FAQ answers interpolate site.ts), reduced-motion + no-JS paths all verified, canvas dispose contract intact.
+- All previous features re-verified regression-free (search, filters, lightbox nav, two-phase scroll, back-to-top, open-now badge, reveals).
+
+Unresolved risks / next-phase recommendations:
+1. Lighthouse CI (mobile perf ≥ 85 with Scene A) — still needs a production build; forbidden in this sandbox.
+2. Real-device QA of the 3D hero on low-end Android remains open.
+3. Pre-production client tasks unchanged: production domain in SITE_URL, real menu import, real photography swap.
+4. Ideas for round 4: "Order on Zomato" as header CTA on xl+ is done — consider gallery lightbox caption copy-to-clipboard for IG credits; a compact "jump to coffee/desserts" quick-nav on the menu for 390px; FAQ-anchored deep links from the home visit band ("See FAQs → /visit#faq"); consider swapping the round-2 OG lockup with a photo-based OG per route.
+5. Dev server reaping: if port 3000 dies between rounds, restart with `setsid -f bun run dev > dev.log 2>&1 < /dev/null` (kill -9 zombie next-server + rm -rf .next if wedged).

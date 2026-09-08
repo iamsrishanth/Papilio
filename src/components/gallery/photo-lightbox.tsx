@@ -53,6 +53,26 @@ export function PhotoLightbox({
     onIndexChange((index + 1) % total);
   }, [index, total, onIndexChange]);
 
+  // Touch swipe — horizontal flicks navigate, vertical drags keep
+  // scrolling the dialog. 48px threshold with a 64px vertical gate.
+  const touchStart = React.useRef<{ x: number; y: number } | null>(null);
+  const onTouchStart = (e: React.TouchEvent<HTMLElement>) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+  const onTouchEnd = (e: React.TouchEvent<HTMLElement>) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start || index === null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    if (Math.abs(dx) > 48 && Math.abs(dy) < 64) {
+      if (dx < 0) goNext();
+      else goPrev();
+    }
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault();
@@ -75,6 +95,8 @@ export function PhotoLightbox({
       <DialogContent
         showCloseButton={false}
         onKeyDown={handleKeyDown}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
         className={cn(
           "flex max-h-[calc(100vh-2rem)] max-w-[calc(100vw-2rem)] flex-col items-center gap-4 overflow-y-auto rounded-card border-linen bg-surface-espresso p-4 text-cream shadow-modal sm:max-w-[1080px] sm:p-6",
           className
@@ -130,6 +152,12 @@ export function PhotoLightbox({
               <ChevronRight className="size-5" aria-hidden="true" />
             </button>
           </div>
+
+          <p
+            className="text-[0.7rem] font-semibold tracking-wide text-cream/45 uppercase sm:hidden"
+          >
+            Swipe to browse
+          </p>
         </div>
       </DialogContent>
     </Dialog>

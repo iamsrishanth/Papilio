@@ -160,6 +160,7 @@
   /* Underlined text links get a warm caramel underline (hover: full) */
   a {
     text-decoration-color: rgba(154, 91, 31, 0.55);
+    text-underline-offset: 3px;
   }
 
   a:hover {
@@ -236,6 +237,18 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* Editorial drop cap — Playfair initial in caramel, for story prose.
+   Applied to the first paragraph of a chapter; never on dark surfaces. */
+.drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-playfair), Georgia, serif;
+  font-weight: 600;
+  font-size: 3.3em;
+  line-height: 0.8;
+  padding: 0.05em 0.1em 0 0;
+  color: #9a5b1f; /* caramel */
 }
 
 /* ------------------------------------------------------------------ */
@@ -351,5 +364,10 @@
   a {
     text-decoration: none !important;
     color: inherit !important;
+  }
+
+  /* FAQ accordion answers print expanded */
+  [data-slot="accordion-content"] {
+    display: block !important;
   }
 }

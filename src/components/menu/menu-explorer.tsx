@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { Bike, Printer, Search, Sparkles, UtensilsCrossed, X } from "lucide-react";
 import {
   menu,
@@ -13,6 +14,7 @@ import {
 import { VegGlyph, type DietKind } from "@/components/site/veg-glyph";
 import { SteamBand } from "@/components/menu/steam-band";
 import { CtaButton } from "@/components/site/cta-button";
+import { ShareButton } from "@/components/site/share-button";
 import { links, site } from "@/content/site";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +43,25 @@ const counts: Record<Filter, number> = {
 };
 
 const filters: Filter[] = ["all", "veg", "nonveg", "egg"];
+
+/** URL params the explorer understands (deep-linkable & shareable). */
+type UrlState = { diet: Filter; signature: boolean; q: string };
+
+const QUERY_MAX = 60;
+
+function readUrlState(params: URLSearchParams): UrlState | null {
+  const diet = params.get("diet");
+  const sig = params.get("signature");
+  const q = params.get("q");
+  if (!diet && !sig && !q) return null;
+  const known: Filter | null =
+    diet === "veg" || diet === "nonveg" || diet === "egg" ? diet : null;
+  return {
+    diet: known ?? "all",
+    signature: sig === "1" || sig === "true",
+    q: q ? q.trim().slice(0, QUERY_MAX) : "",
+  };
+}
 
 /** Menu item row — FSSAI glyph, name, dotted leader, verified price only. */
 function MenuRow({ item, dark = false }: { item: MenuItem; dark?: boolean }) {
@@ -132,6 +153,33 @@ export function MenuExplorer() {
   const sectionEls = React.useRef<Map<string, HTMLElement>>(new Map());
   const railRef = React.useRef<HTMLDivElement>(null);
   const searchRef = React.useRef<HTMLInputElement>(null);
+  const searchParams = useSearchParams();
+
+  // Deep links: /menu?diet=veg&signature=1&q=paneer seeds the controls.
+  // Runs on mount and on client-side navigations that change the params.
+  React.useEffect(() => {
+    const state = readUrlState(new URLSearchParams(searchParams.toString()));
+    if (!state) return;
+    setFilter(state.diet);
+    setSignatureOnly(state.signature);
+    setQuery(state.q);
+  }, [searchParams]);
+
+  // Shareable state: keep the address bar in sync without creating
+  // history entries (replaceState, not router.push).
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams();
+    if (filter !== "all") params.set("diet", filter);
+    if (signatureOnly) params.set("signature", "1");
+    if (query.trim()) params.set("q", query.trim().slice(0, QUERY_MAX));
+    const qs = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      qs ? `${window.location.pathname}?${qs}` : window.location.pathname
+    );
+  }, [filter, signatureOnly, query]);
 
   const q = query.trim().toLowerCase();
   const signatureSet = React.useMemo(
@@ -496,6 +544,13 @@ export function MenuExplorer() {
               <Printer className="size-4" aria-hidden="true" />
               Print the menu
             </button>
+            <ShareButton
+              path="/menu"
+              title="The Papilio menu"
+              text="187 items — from focaccia sandwiches to filter coffee and counter desserts, at Papilio, Hanamkonda."
+              label="Share the menu"
+              className="no-print"
+            />
             <span className="text-sm text-cocoa/80">
               {site.costForTwo.delivery}
             </span>

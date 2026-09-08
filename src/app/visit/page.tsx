@@ -6,7 +6,9 @@ import { CopyButton } from "@/components/site/copy-button";
 import { Reveal } from "@/components/site/reveal";
 import { HoursCard } from "@/components/site/hours-card";
 import { MapEmbed } from "@/components/site/map-embed";
+import { FaqAccordion } from "@/components/site/faq-accordion";
 import { site, links, whatsappLink, whatsappMessages } from "@/content/site";
+import { visitFaqs, visitFaqJsonLd } from "@/content/faq";
 
 export const metadata: Metadata = {
   title: "Visit — Excise Colony, Hanamkonda",
@@ -25,6 +27,10 @@ export const metadata: Metadata = {
 export default function VisitPage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(visitFaqJsonLd) }}
+      />
       {/* ------------------------------------------------ Header */}
       <header className="pt-12 pb-10 max-w-2xl lg:pt-16">
         <Reveal>
@@ -171,6 +177,29 @@ export default function VisitPage() {
               </a>
             </li>
           </ul>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------ FAQ */}
+      <section aria-labelledby="faq-heading" className="pb-16 lg:pb-24">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+          <Reveal className="lg:col-span-4">
+            <SectionEyebrow>Good to know</SectionEyebrow>
+            <h2
+              id="faq-heading"
+              className="font-display mt-5 text-h2 font-semibold text-espresso"
+            >
+              Frequently asked
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-cocoa">
+              The questions guests ask us most — hours, bookings, cakes and
+              getting here. Anything else, WhatsApp or call us on{" "}
+              <span className="tnum font-semibold">{site.phoneDisplay}</span>.
+            </p>
+          </Reveal>
+          <Reveal delay={0.08} className="lg:col-span-8">
+            <FaqAccordion faqs={visitFaqs} />
+          </Reveal>
         </div>
       </section>
 

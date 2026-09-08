@@ -14,6 +14,7 @@ import {
 } from "@/content/story";
 import { pressLine } from "@/content/reviews";
 import { site } from "@/content/site";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Our story — est. October 2023",
@@ -59,8 +60,14 @@ export default function StoryPage() {
           <h1 className="font-display mt-5 text-[2.5rem] font-semibold leading-tight text-espresso sm:text-h1">
             From chrysalis to butterfly
           </h1>
-          {storyIntro.map((paragraph) => (
-            <p key={paragraph} className="mt-4 text-base leading-relaxed text-cocoa">
+          {storyIntro.map((paragraph, i) => (
+            <p
+              key={paragraph}
+              className={cn(
+                "mt-4 text-base leading-relaxed text-cocoa",
+                i === 0 && "drop-cap"
+              )}
+            >
               {paragraph}
             </p>
           ))}
@@ -79,10 +86,13 @@ export default function StoryPage() {
               >
                 {room.heading}
               </h2>
-              {room.paragraphs.map((paragraph) => (
+              {room.paragraphs.map((paragraph, i) => (
                 <p
                   key={paragraph}
-                  className="mt-4 text-base leading-relaxed text-cocoa"
+                  className={cn(
+                    "mt-4 text-base leading-relaxed text-cocoa",
+                    i === 0 && "drop-cap"
+                  )}
                 >
                   {paragraph}
                 </p>
@@ -94,6 +104,7 @@ export default function StoryPage() {
                 alt={chapterImages.room.alt}
                 width={chapterImages.room.width}
                 height={chapterImages.room.height}
+                priority
                 sizes="(max-width: 1024px) 100vw, 42vw"
                 className="h-auto w-full object-cover"
               />
@@ -124,10 +135,13 @@ export default function StoryPage() {
               >
                 {craft.heading}
               </h2>
-              {craft.paragraphs.map((paragraph) => (
+              {craft.paragraphs.map((paragraph, i) => (
                 <p
                   key={paragraph}
-                  className="mt-4 text-base leading-relaxed text-cocoa"
+                  className={cn(
+                    "mt-4 text-base leading-relaxed text-cocoa",
+                    i === 0 && "drop-cap"
+                  )}
                 >
                   {paragraph}
                 </p>

@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) **Yes.** Questions are numbered 01, 02... in a serif display font with a chevron icon.\n2) **Yes.** Question 01 is expanded and displays the opening hours text (8:00 AM – 10:30 PM).\n3) **No issues detected.** There is no overlap or clipping; the alignment is consistent. The color palette strictly adheres to the allowed scheme (cream/ivory cards, espresso brown text, caramel accents).",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788904643,
+  "id": "2026090905572115d750f62a414e57",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "2026090905572115d750f62a414e57",
+  "usage": {
+    "completion_tokens": 100,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 462,
+    "prompt_tokens_details": {
+      "cached_tokens": 2
+    },
+    "total_tokens": 562
+  }
+}

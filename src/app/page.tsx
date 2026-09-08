@@ -77,12 +77,13 @@ export default function HomePage() {
                 item={item}
                 image={signatureImages[item.name]}
                 className="h-full"
+                href={`/menu?q=${encodeURIComponent(item.name)}`}
               />
             </Reveal>
           ))}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
           <Link
             href="/menu"
             className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel underline-offset-4 hover:underline"
@@ -90,6 +91,20 @@ export default function HomePage() {
             See the full menu — 21 sections, 187 items
             <ArrowRight
               className="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:group-hover:transform-none motion-reduce:transition-none"
+              aria-hidden="true"
+            />
+          </Link>
+          <span
+            aria-hidden="true"
+            className="hidden h-4 w-px bg-linen sm:block"
+          />
+          <Link
+            href="/menu?signature=1"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-cocoa underline-offset-4 hover:text-caramel hover:underline"
+          >
+            Filter the menu to these four
+            <ArrowRight
+              className="size-4 motion-reduce:transition-none"
               aria-hidden="true"
             />
           </Link>

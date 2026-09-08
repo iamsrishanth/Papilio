@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { VegGlyph } from "@/components/site/veg-glyph";
 import type { MenuItem } from "@/content/menu";
 import { cn } from "@/lib/utils";
@@ -6,19 +7,23 @@ import { cn } from "@/lib/utils";
 /**
  * card-dish (DESIGN.md) — Playfair name, Inter body-sm description,
  * FSSAI glyph, price-tag bottom-right. Price renders only when verified.
+ * Optional `href` turns the card into a deep link (e.g. into the menu
+ * with that dish pre-searched) without adding a filled CTA.
  */
 export function DishCard({
   item,
   image,
   className,
   priority = false,
+  href,
 }: {
   item: MenuItem;
   image?: { src: string; alt: string };
   className?: string;
   priority?: boolean;
+  href?: string;
 }) {
-  return (
+  const card = (
     <article
       className={cn(
         "group flex flex-col overflow-hidden rounded-card bg-ivory shadow-card transition-shadow duration-300 hover:shadow-lift motion-reduce:transition-none",
@@ -74,4 +79,17 @@ export function DishCard({
       </div>
     </article>
   );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        aria-label={`Find ${item.name} on the menu`}
+        className="block rounded-card focus-visible:outline-offset-4"
+      >
+        {card}
+      </Link>
+    );
+  }
+  return card;
 }

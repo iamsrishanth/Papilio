@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { MenuExplorer } from "@/components/menu/menu-explorer";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { VegGlyph } from "@/components/site/veg-glyph";
@@ -45,7 +46,23 @@ export default function MenuPage() {
         </div>
       </header>
 
-      <MenuExplorer />
+      {/* Suspense boundary: MenuExplorer reads the URL for deep-linkable
+          filters (/menu?diet=veg&signature=1&q=…) via useSearchParams. */}
+      <Suspense
+        fallback={
+          <div className="no-print space-y-6" aria-hidden="true">
+            <div className="h-12 max-w-md rounded-[12px] border border-linen bg-white/60" />
+            {menu.map((c) => (
+              <div
+                key={c.id}
+                className="h-40 rounded-card bg-ivory/70 shadow-card"
+              />
+            ))}
+          </div>
+        }
+      >
+        <MenuExplorer />
+      </Suspense>
 
       <p className="mt-10 text-center text-sm text-cocoa/70">
         {site.costForTwo.dineIn} · {site.costForTwo.delivery}

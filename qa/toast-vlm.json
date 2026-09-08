@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1. **Toast Style:** Yes, it is a warm ivory/cream pill with dark brown text and a small checkmark icon.\n2. **Readability/Clipping:** Yes, it is fully readable and positioned well within the viewport, avoiding any edge clipping.\n3. **Design Palette:** Yes, the toast perfectly matches the overall warm cream and brown aesthetic of the website.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788905223,
+  "id": "20260909060659a2c8f07342a041b6",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "20260909060659a2c8f07342a041b6",
+  "usage": {
+    "completion_tokens": 78,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 461,
+    "prompt_tokens_details": {
+      "cached_tokens": 2
+    },
+    "total_tokens": 539
+  }
+}
