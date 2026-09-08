@@ -14,7 +14,7 @@ export function MapEmbed({ className }: { className?: string }) {
         className
       )}
     >
-      <div className="relative aspect-[4/3] w-full">
+      <div className="relative aspect-[4/3] w-full bg-linen/40">
         <iframe
           src={links.mapsEmbed}
           title="Papilio on Google Maps — Excise Colony, Hanamkonda"

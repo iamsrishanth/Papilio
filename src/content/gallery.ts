@@ -3,7 +3,21 @@
  * (DESIGN.md Imagery: "Papilio patisserie counter with…", never
  * "IMG_2043"). `tall` marks portrait shots; width/height are intrinsic
  * pixels so next/image can reserve layout space.
+ *
+ * `tags` group photos into browsable subjects — descriptive categories
+ * only (no business claims): the room, coffee & tables, the patisserie
+ * and the oven. A photo may belong to more than one subject.
  */
+
+/** Browsable photo subjects (filter chips on /gallery). */
+export type GalleryTag = "room" | "coffee" | "patisserie" | "oven";
+
+export const galleryTagLabels: { id: GalleryTag; label: string }[] = [
+  { id: "room", label: "The room" },
+  { id: "coffee", label: "Coffee & tables" },
+  { id: "patisserie", label: "Patisserie" },
+  { id: "oven", label: "From the oven" },
+];
 
 export type GalleryPhoto = {
   src: string;
@@ -13,6 +27,8 @@ export type GalleryPhoto = {
   height: number;
   /** Portrait orientation — hints ordering for the masonry columns. */
   tall?: boolean;
+  /** Subjects this photo belongs to (see GalleryTag). */
+  tags: GalleryTag[];
 };
 
 export const galleryPhotos: GalleryPhoto[] = [
@@ -22,6 +38,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "The room at Papilio — warm light, wood and plants.",
     width: 1152,
     height: 864,
+    tags: ["room"],
   },
   {
     src: "/images/gallery-coffee-pour.png",
@@ -30,6 +47,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     width: 864,
     height: 1152,
     tall: true,
+    tags: ["coffee"],
   },
   {
     src: "/images/gallery-dessert-plate.png",
@@ -37,6 +55,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "Crème brûlée, plated — torched sugar and berries.",
     width: 1024,
     height: 1024,
+    tags: ["patisserie"],
   },
   {
     src: "/images/gallery-seating.png",
@@ -45,6 +64,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     width: 768,
     height: 1344,
     tall: true,
+    tags: ["room"],
   },
   {
     src: "/images/patisserie-counter.png",
@@ -52,6 +72,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "The patisserie counter — rows of macarons and cream desserts.",
     width: 1152,
     height: 864,
+    tags: ["patisserie"],
   },
   {
     src: "/images/gallery-facade.png",
@@ -60,6 +81,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     width: 864,
     height: 1152,
     tall: true,
+    tags: ["room"],
   },
   {
     src: "/images/gallery-baking.png",
@@ -67,6 +89,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "Piping rosettes — the patisserie at work.",
     width: 1024,
     height: 1024,
+    tags: ["patisserie", "oven"],
   },
   {
     src: "/images/gallery-spread.png",
@@ -74,6 +97,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "A table set for two.",
     width: 1152,
     height: 864,
+    tags: ["coffee"],
   },
   {
     src: "/images/patisserie-signature-cake.png",
@@ -81,6 +105,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "The signature chocolate truffle cake.",
     width: 1024,
     height: 1024,
+    tags: ["patisserie"],
   },
   {
     src: "/images/gallery-focaccia.png",
@@ -88,6 +113,7 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "Focaccia, straight from the oven.",
     width: 1152,
     height: 864,
+    tags: ["oven"],
   },
   {
     src: "/images/patisserie-gifting.png",
@@ -95,5 +121,6 @@ export const galleryPhotos: GalleryPhoto[] = [
     caption: "A gift box, ready for giving.",
     width: 1024,
     height: 1024,
+    tags: ["patisserie"],
   },
 ];

@@ -11,10 +11,13 @@ export function ButterflyGlyph({
   variant = "flat",
   className,
   strokeWidth = 1.5,
+  decorative = false,
 }: {
   variant?: "flat" | "line";
   className?: string;
   strokeWidth?: number;
+  /** Decorative instances are hidden from assistive tech. */
+  decorative?: boolean;
 }) {
   const flat = variant === "flat";
 
@@ -41,8 +44,9 @@ export function ButterflyGlyph({
   return (
     <svg
       viewBox="0 0 64 64"
-      role="img"
-      aria-label="Papilio swallowtail butterfly glyph"
+      role={decorative ? "presentation" : "img"}
+      aria-hidden={decorative || undefined}
+      aria-label={decorative ? undefined : "Papilio swallowtail butterfly glyph"}
       className={cn("size-6", className)}
     >
       {wing(false)}

@@ -26,7 +26,7 @@ export function DishCard({
       )}
     >
       {image ? (
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden bg-linen/40">
           <Image
             src={image.src}
             alt={image.alt}

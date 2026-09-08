@@ -335,7 +335,7 @@ export default function PapilioHero3D() {
           float body = max(ax * 6.5 - 0.035, abs(q.y + 0.02) - 0.30);
           float d = min(min(fore, hind), body);
           if (d > 0.015) discard;
-          vec3 col = mix(uColorA, uColorB, fract(vSeed * 5.7));
+          vec3 col = mix(uColorA, uColorB, fract(vSeed * 5.7))
             * (1.0 - 0.25 * smoothstep(0.0, 0.05, d));
           col = mix(col, uFog, smoothstep(-6.0, -12.0, vDepth));
           gl_FragColor = vec4(col, 1.0);

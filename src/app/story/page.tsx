@@ -4,6 +4,7 @@ import { Quote } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { Reveal } from "@/components/site/reveal";
 import { WingUnfold } from "@/components/story/wing-unfold";
+import { StoryTimeline } from "@/components/story/story-timeline";
 import {
   storyIntro,
   storyChapters,
@@ -87,7 +88,7 @@ export default function StoryPage() {
                 </p>
               ))}
             </div>
-            <figure className="overflow-hidden rounded-card shadow-card lg:col-span-5">
+            <figure className="overflow-hidden rounded-card bg-linen/40 shadow-card lg:col-span-5">
               <Image
                 src={chapterImages.room.src}
                 alt={chapterImages.room.alt}
@@ -105,7 +106,7 @@ export default function StoryPage() {
       {craft ? (
         <section aria-labelledby="craft-heading" className="pb-16 lg:pb-24">
           <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
-            <figure className="order-last overflow-hidden rounded-card shadow-card lg:order-first lg:col-span-5">
+            <figure className="order-last overflow-hidden rounded-card bg-linen/40 shadow-card lg:order-first lg:col-span-5">
               <Image
                 src={chapterImages.craft.src}
                 alt={chapterImages.craft.alt}
@@ -218,26 +219,7 @@ export default function StoryPage() {
           </h2>
         </div>
 
-        <ol className="mt-10 border-l-2 border-caramel/40 pl-8 sm:mt-12 sm:grid sm:grid-cols-3 sm:gap-8 sm:border-l-0 sm:border-t-2 sm:pl-0">
-          {storyTimeline.map((milestone) => (
-            <li
-              key={milestone.label}
-              className="relative pb-10 last:pb-0 sm:pb-0 sm:pt-8"
-            >
-              <span
-                aria-hidden="true"
-                className="absolute top-1 -left-[39px] size-3 rounded-full bg-caramel ring-4 ring-cream sm:-top-[7px] sm:left-0"
-              />
-              <p className="label-caps text-caramel">{milestone.label}</p>
-              <p className="font-display mt-2 text-h3 font-medium text-espresso">
-                {milestone.title}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-cocoa">
-                {milestone.detail}
-              </p>
-            </li>
-          ))}
-        </ol>
+        <StoryTimeline milestones={storyTimeline} />
 
         <p className="mt-12 text-sm text-cocoa/70">
           Papilio — {site.tagline}, Excise Colony, Hanamkonda. Established{" "}

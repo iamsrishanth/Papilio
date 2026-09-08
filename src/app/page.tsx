@@ -17,7 +17,7 @@ import { DishCard } from "@/components/menu/dish-card";
 import { HoursCard } from "@/components/site/hours-card";
 import { site, links, whatsappLink, whatsappMessages } from "@/content/site";
 import { verifiedQuotes } from "@/content/reviews";
-import { menu, type MenuItem } from "@/content/menu";
+import { menu, signatureDishNames, type MenuItem } from "@/content/menu";
 
 // The four flagship dishes with verified prices (PROMPT.md §8)
 const signatureImages: Record<string, { src: string; alt: string }> = {
@@ -39,9 +39,8 @@ const signatureImages: Record<string, { src: string; alt: string }> = {
   },
 };
 
-const signatureNames = Object.keys(signatureImages);
 const allItems: MenuItem[] = menu.flatMap((c) => c.items);
-const signatureItems = signatureNames
+const signatureItems = signatureDishNames
   .map((name) => allItems.find((i) => i.name === name))
   .filter((i): i is MenuItem => Boolean(i));
 

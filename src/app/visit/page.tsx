@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bike, Check, Instagram, MapPin, MessageCircle, Phone } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { CtaButton } from "@/components/site/cta-button";
+import { CopyButton } from "@/components/site/copy-button";
 import { Reveal } from "@/components/site/reveal";
 import { HoursCard } from "@/components/site/hours-card";
 import { MapEmbed } from "@/components/site/map-embed";
@@ -78,6 +79,7 @@ export default function VisitPage() {
                 <Phone className="size-4" aria-hidden="true" />
                 Call the café
               </CtaButton>
+              <CopyButton text={site.fullAddress} />
             </div>
           </div>
 

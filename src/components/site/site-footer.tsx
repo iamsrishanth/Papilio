@@ -8,8 +8,14 @@ import { navItems, site, links } from "@/content/site";
  */
 export function SiteFooter() {
   return (
-    <footer className="mt-auto bg-espresso text-cream">
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <footer className="relative mt-auto overflow-hidden bg-espresso text-cream">
+      {/* Faint butter butterfly watermark — decorative only */}
+      <ButterflyGlyph
+        variant="flat"
+        decorative
+        className="pointer-events-none absolute -bottom-12 -right-10 size-64 select-none opacity-[0.05]"
+      />
+      <div className="relative mx-auto w-full max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12">
           {/* Brand */}
           <div className="lg:col-span-4">

@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "1) **Yes**, there is a large, stylized butterfly graphic on the right side of the hero section.\n2) **Yes**, there are small, faint white specks and tiny silhouettes (resembling distant butterflies or motes) scattered in the air, particularly near the text on the left.\n3) **No significant defects.** The design is clean with good contrast between the text and the background. The large butterfly has a soft, semi-transparent aesthetic that appears intentional rather than a clipping error.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788897167,
+  "id": "20260909035244f8224574f2604417",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "20260909035244f8224574f2604417",
+  "usage": {
+    "completion_tokens": 105,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 950,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 1055
+  }
+}

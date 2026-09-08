@@ -69,6 +69,14 @@ export function SiteHeader() {
             <Bike className="size-4" aria-hidden="true" />
             Order on Swiggy
           </CtaButton>
+          <a
+            href={links.zomato}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden text-sm text-cocoa underline-offset-4 transition-colors hover:text-caramel hover:underline xl:inline-flex"
+          >
+            Also on Zomato
+          </a>
         </div>
 
         {/* Mobile menu */}

@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Bike, Printer, Search, UtensilsCrossed, X } from "lucide-react";
+import { Bike, Printer, Search, Sparkles, UtensilsCrossed, X } from "lucide-react";
 import {
   menu,
   menuNote,
+  signatureDishNames,
   totalItems,
   type MenuCategory,
   type MenuItem,
@@ -126,14 +127,20 @@ function MenuRow({ item, dark = false }: { item: MenuItem; dark?: boolean }) {
 export function MenuExplorer() {
   const [filter, setFilter] = React.useState<Filter>("all");
   const [query, setQuery] = React.useState("");
+  const [signatureOnly, setSignatureOnly] = React.useState(false);
   const [active, setActive] = React.useState<string>(menu[0].id);
   const sectionEls = React.useRef<Map<string, HTMLElement>>(new Map());
   const railRef = React.useRef<HTMLDivElement>(null);
   const searchRef = React.useRef<HTMLInputElement>(null);
 
   const q = query.trim().toLowerCase();
+  const signatureSet = React.useMemo(
+    () => new Set<string>(signatureDishNames),
+    []
+  );
 
   const matches = (item: MenuItem) => {
+    if (signatureOnly && !signatureSet.has(item.name)) return false;
     if (filter !== "all" && item.diet !== filter) return false;
     if (!q) return true;
     const haystack = `${item.name} ${item.d ?? ""} ${item.allergen ?? ""}`.toLowerCase();
@@ -177,6 +184,25 @@ export function MenuExplorer() {
       .matches;
     rail.scrollTo({ left: Math.max(0, target), behavior: reduced ? "auto" : "smooth" });
   }, [active]);
+
+  // Press "/" anywhere outside a field to jump into search
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const inField =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable);
+      if (e.key === "/" && !inField) {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const scrollTo = React.useCallback((id: string) => {
     const el = sectionEls.current.get(id);
@@ -278,7 +304,14 @@ export function MenuExplorer() {
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
-            ) : null}
+            ) : (
+              <kbd
+                aria-hidden="true"
+                className="pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-tag border border-linen bg-cream px-1.5 py-0.5 font-sans text-xs font-semibold text-cocoa/70 sm:block"
+              >
+                /
+              </kbd>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
@@ -310,6 +343,30 @@ export function MenuExplorer() {
               })}
             </div>
 
+            <span
+              aria-hidden="true"
+              className="hidden h-6 w-px bg-linen sm:block"
+            />
+
+            <button
+              type="button"
+              onClick={() => setSignatureOnly((v) => !v)}
+              aria-pressed={signatureOnly}
+              title="The four flagship dishes with verified prices"
+              className={cn(
+                "inline-flex items-center gap-2 rounded-pill border px-4 py-2 text-sm font-medium transition-colors",
+                signatureOnly
+                  ? "border-caramel bg-linen text-espresso"
+                  : "border-linen bg-ivory text-cocoa hover:border-caramel hover:text-caramel"
+              )}
+            >
+              <Sparkles className="size-4 text-caramel" aria-hidden="true" />
+              Signature picks
+              <span className="tnum text-xs opacity-70">
+                {signatureDishNames.length}
+              </span>
+            </button>
+
             <p
               aria-live="polite"
               className="tnum ml-1 text-sm text-cocoa/80"
@@ -334,6 +391,7 @@ export function MenuExplorer() {
                 onClick={() => {
                   setQuery("");
                   setFilter("all");
+                  setSignatureOnly(false);
                 }}
                 className="mt-5 inline-flex items-center gap-2 rounded-pill border border-linen bg-cream px-5 py-2.5 text-sm font-semibold text-caramel transition-colors hover:border-caramel"
               >

@@ -463,3 +463,15 @@ export const menu: MenuCategory[] = [
 
 export const totalItems = menu.reduce((sum, c) => sum + c.items.length, 0);
 export const totalCategories = menu.length;
+
+/**
+ * The four flagship dishes with verified prices (PROMPT.md §8) —
+ * single source of truth shared by the home signature strip and the
+ * menu explorer's "Signature picks" quick filter.
+ */
+export const signatureDishNames = [
+  "Chicken & Avocado Salad",
+  "Buttermilk Chicken Wrap",
+  "Cottage Crunch Wrap",
+  "Double Trouble Chicken Burger",
+] as const;
