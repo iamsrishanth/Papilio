@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import {
   Armchair,
   CakeSlice,
@@ -18,9 +19,11 @@ import { cn } from "@/lib/utils";
  * GalleryGrid — CSS-columns masonry with a CSS-only hover parallax
  * (scale 1.02 + slight lift, disabled under prefers-reduced-motion).
  * Subject filter chips narrow the set (counts derive from the data);
- * the lightbox navigates within the filtered set. Clicking a photo
- * opens the PhotoLightbox; state lives here so the page itself stays
- * a server component.
+ * the lightbox navigates within the filtered set. The chosen tag is
+ * deep-linkable (/gallery?tag=patisserie) and synced to the address
+ * bar without history entries, mirroring the menu's filter deep links.
+ * Clicking a photo opens the PhotoLightbox; state lives here so the
+ * page itself stays a server component.
  */
 
 type TagFilter = "all" | GalleryTag;
@@ -42,6 +45,28 @@ export function GalleryGrid({
 }) {
   const [openIndex, setOpenIndex] = React.useState<number | null>(null);
   const [tag, setTag] = React.useState<TagFilter>("all");
+  const searchParams = useSearchParams();
+
+  // Deep link: /gallery?tag=patisserie seeds the filter (unknown values
+  // are ignored). Runs on mount and on client-side param changes.
+  React.useEffect(() => {
+    const t = searchParams.get("tag");
+    if (!t) return;
+    const known = galleryTagLabels.some(({ id }) => id === t);
+    setTag(known ? (t as TagFilter) : "all");
+  }, [searchParams]);
+
+  // Shareable state: keep the address bar in sync without creating
+  // history entries (replaceState, not router.push).
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const qs = tag === "all" ? "" : `?tag=${tag}`;
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${qs}${window.location.hash}`
+    );
+  }, [tag]);
 
   const filtered =
     tag === "all" ? photos : photos.filter((p) => p.tags.includes(tag));
@@ -98,10 +123,17 @@ export function GalleryGrid({
           })}
         </div>
 
-        <p aria-live="polite" className="tnum ml-1 text-sm text-cocoa/80">
-          {filtered.length} of {total} photos
-        </p>
-      </div>
+          <p aria-live="polite" className="tnum ml-1 text-sm text-cocoa/80">
+            {filtered.length} of {total} photos
+          </p>
+        </div>
+
+        {total > 0 && tag !== "all" ? (
+          <p className="sr-only" aria-live="polite">
+            Filtered to {galleryTagLabels.find(({ id }) => id === tag)?.label}{" "}
+            — {filtered.length} photos. The address bar link shares this view.
+          </p>
+        ) : null}
 
       {/* ---------------------------------------------- Masonry */}
       <div className={cn("columns-2 gap-6 sm:columns-3 lg:columns-4", className)}>

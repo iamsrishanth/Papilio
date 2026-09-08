@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Quote } from "lucide-react";
+import { Instagram, Quote } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { Reveal } from "@/components/site/reveal";
 import { WingUnfold } from "@/components/story/wing-unfold";
@@ -207,12 +207,22 @@ export default function StoryPage() {
             {storyFounders.map((founder) => (
               <li
                 key={founder.name}
-                className="rounded-card bg-ivory p-5 shadow-card"
+                className="group rounded-card bg-ivory p-5 shadow-card transition-shadow duration-300 hover:shadow-lift motion-reduce:transition-none"
               >
                 <p className="font-display text-h3 font-medium text-espresso">
                   {founder.name}
                 </p>
                 <p className="label-caps mt-1.5 text-caramel">{founder.role}</p>
+                <a
+                  href={founder.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-cocoa transition-colors hover:text-caramel hover:underline"
+                  aria-label={`${founder.name} on Instagram — ${founder.instagramHandle}`}
+                >
+                  <Instagram className="size-4 text-caramel transition-transform duration-300 group-hover:-rotate-6 motion-reduce:transition-none motion-reduce:group-hover:transform-none" aria-hidden="true" />
+                  {founder.instagramHandle}
+                </a>
               </li>
             ))}
           </ul>

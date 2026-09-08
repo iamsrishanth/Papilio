@@ -248,3 +248,32 @@ Unresolved risks / next-phase recommendations:
 3. Pre-production client tasks unchanged: production domain in SITE_URL, real menu import, real photography swap (the new OG/icon art is AI-generated placeholder-grade).
 4. Ideas for round 5: a tiny "share this page" on /visit (ShareButton is reusable); gallery photo captions could gain copy-to-clipboard for IG reposts; consider OG twitter:card per-route check; menu rail could get aria-expanded on mobile; README/handover for the client (how to swap SITE_URL, images, menu data).
 5. Dev server reaping happened mid-round — always re-check port 3000 first; restart: kill zombie next-server if 99% CPU, rm -rf .next, `setsid -f bun run dev > dev.log 2>&1 < /dev/null`.
+
+---
+Task ID: 15 (webDevReview round 5)
+Agent: Z.ai Code (main)
+Task: Baseline QA, then feature/polish round: share-this-page on /visit, copy-phone icon button, founder Instagram links, gallery ?tag= deep links, lightbox copy-caption, header scrolled elevation, ::selection palette refinement, DishCard hover lift.
+
+Work Log:
+- Baseline QA (fresh agent-browser session): all 6 routes + 404 + sitemap + robots + manifest return 200, zero console/page errors, canvas 1→0 lifecycle intact, no 390px overflow anywhere. Stable → feature/polish tier.
+- NEW FEATURE — Share this page on /visit: reusable ShareButton (native share → clipboard fallback + sonner toast) placed as a quiet tertiary link under the address card CTA row (hairline divider, -ml-4 icon alignment). Verified with stubbed clipboard: copies origin+/visit.
+- NEW FEATURE — copy phone number: CopyButton gained an iconOnly prop (44px square pill, aria-label swap "Phone number copied — Copy phone number", no visible text) rendered beside the phone row in the /visit Contact card (li is now a flex row). Verified: copies "+91 90003 16366" exactly.
+- NEW FEATURE — founder Instagram links: StoryFounder type + story.ts entries now carry instagramHandle/instagramUrl (@Radhasuvidha, @ChefSiddharthaReddy — from the verified research corpus / café IG bio; clearly commented in the module). Founder cards render an IG link (min-h-11, icon + handle, aria-label "«name» on Instagram — @handle"), cards gained hover shadow-lift + icon micro-tilt. Verified in DOM: 3 instagram.com links on /story (2 founders + footer café handle).
+- NEW FEATURE — gallery tag deep links: GalleryGrid reads /gallery?tag=room|coffee|patisserie|oven (useSearchParams; unknown values reset to All) and syncs the chosen tag back via history.replaceState (no history entries) — mirrors the menu filter deep-link pattern exactly. gallery/page.tsx wraps GalleryGrid in <Suspense> with a masonry-shaped skeleton fallback (8 aspect-ratio placeholders, no layout shift). sr-only live note announces the active filter. Verified: ?tag=patisserie → 5 of 11 + chip active; All click clears the URL; Coffee click → ?tag=coffee (2 photos); ?tag=bogus ignored → All (11 figures).
+- NEW FEATURE — lightbox copy caption: quiet 44px pill under the nav row in PhotoLightbox (Copy icon, "Copy caption" → "Copied" swap, aria-label "Caption copied", clipboard API + textarea fallback, state resets on photo change via useEffect on activeIndex). Verified: copies the exact caption text; label resets after navigating; arrow-key nav + ESC close unaffected (1/11 → 2/11 → 1/11 → closed).
+- STYLING — header scrolled elevation: rAF-throttled passive scroll listener (scrollY > 8) toggles a firmer hairline (border-linen), bg-cream/95 and warm shadow-card; transition is colors/shadow only, height constant so no layout shift; motion-reduce:transition-none. Verified live: shadow appears at 600px, disappears at top (first test's false negative was smooth-scroll still animating — instant-scroll retest confirms).
+- STYLING — ::selection refinement: light surfaces get a caramel 22% tint (espresso text); espresso/dark surfaces ([class~=bg-surface-espresso]/[class~=bg-espresso], self + descendants) get a butter 32% tint with cream text. Verified present in the served CSS chunk (rules sit inside @layer base, so a naive top-level CSSOM scan misses them — grep the served file instead).
+- STYLING — DishCard hover lift: cards now lift -translate-y-0.5 + shadow-lift on hover (transition-[box-shadow,transform], motion-reduce:transform-none) on top of the existing image zoom.
+- Fixed during round: an initial TDZ bug in PhotoLightbox (effect referenced activeIndexNext before declaration) — restructured to derive activeIndex first; CopyButton aria/label logic cleaned (aria-live stays, label swap unified).
+- QA battery all green: lint exit 0; all routes 200; fresh-session console clean; typo + placeholder quarantine zero hits on all rendered pages (incl. Binge/confetrio guards); founder handles render on /story; menu regressions pass (Veg → 173 of 187, Signature+Veg → 1 of 187); reduced-motion: 0 canvases, 0 hidden reveals, gallery deep link works under RM; 390px: no overflow on /visit /story /gallery; VLM review of the new visit share row + founder cards: "No defects."
+
+Stage Summary:
+- Round-5 shipped: share-this-page on /visit, icon-only copy-phone, founder Instagram links (verified handles), deep-linkable + shareable gallery subject filters with Suspense fallback, lightbox copy-caption, header scrolled elevation, palette-pure ::selection (caramel light / butter dark), DishCard hover lift.
+- Contracts preserved: one filled primary CTA per view (all new controls are tertiary/quiet pills), butter only on espresso surfaces, no fabricated facts (founder handles from the verified research corpus, everything else interpolates content modules), reduced-motion honored, 44px touch targets everywhere, canvas dispose contract intact.
+
+Unresolved risks / next-phase recommendations:
+1. Lighthouse CI (mobile perf ≥ 85) — still needs a production build; forbidden in this sandbox.
+2. Real-device QA of the 3D hero on low-end Android remains open.
+3. Pre-production client tasks unchanged: production domain in SITE_URL, real menu import, real photography swap.
+4. Ideas for round 6: keyboard "g" shortcut to open gallery lightbox? FAQ deep-link chips on home visit band; per-route twitter:card spot audit (all verified summary_large_image so far); gallery lightbox could preload the next image; consider aria-expanded semantics for the mobile menu rail.
+5. Dev server reaping: re-check port 3000 each round; restart with `setsid -f bun run dev > dev.log 2>&1 < /dev/null` (kill -9 zombie next-server + rm -rf .next if wedged).

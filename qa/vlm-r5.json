@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "No defects.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1788907079,
+  "id": "202609090637579997b770ab20496c",
+  "model": "glm-5v-turbo",
+  "object": "chat.completion",
+  "request_id": "202609090637579997b770ab20496c",
+  "usage": {
+    "completion_tokens": 4,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 3431,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3435
+  }
+}

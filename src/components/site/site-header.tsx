@@ -22,8 +22,36 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
 
+  // Scrolled state: once the page moves, the bar gains a firmer hairline,
+  // a touch more opacity and a soft warm shadow — a quiet elevation cue
+  // that never shifts layout (height is constant).
+  const [scrolled, setScrolled] = React.useState(false);
+  React.useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        setScrolled(window.scrollY > 8);
+      });
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-linen/80 bg-cream/90 backdrop-blur-md">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-300 motion-reduce:transition-none",
+        scrolled
+          ? "border-linen bg-cream/95 shadow-card"
+          : "border-linen/80 bg-cream/90"
+      )}
+    >
       <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Wordmark lockup */}
         <Link

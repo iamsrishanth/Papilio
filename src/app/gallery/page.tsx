@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { Reveal } from "@/components/site/reveal";
 import { GalleryGrid } from "@/components/gallery/gallery-grid";
@@ -45,7 +46,24 @@ export default function GalleryPage() {
         </Reveal>
       </header>
 
-      <GalleryGrid photos={galleryPhotos} />
+      {/* Suspense boundary: GalleryGrid reads ?tag= from the URL (filter
+          deep links) — the fallback mirrors the masonry shape so there is
+          no layout shift when the client component streams in. */}
+      <Suspense
+        fallback={
+          <div aria-hidden="true" className="columns-2 gap-6 sm:columns-3 lg:columns-4">
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <div
+                key={i}
+                className="mb-6 break-inside-avoid rounded-card bg-linen/30 shadow-card"
+                style={{ aspectRatio: i % 3 === 0 ? "4/5" : "3/4" }}
+              />
+            ))}
+          </div>
+        }
+      >
+        <GalleryGrid photos={galleryPhotos} />
+      </Suspense>
     </div>
   );
 }

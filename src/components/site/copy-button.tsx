@@ -14,11 +14,14 @@ export function CopyButton({
   text,
   label = "Copy address",
   copiedLabel = "Copied",
+  iconOnly = false,
   className,
 }: {
   text: string;
   label?: string;
   copiedLabel?: string;
+  /** Render a compact square icon button (44px target, no visible label). */
+  iconOnly?: boolean;
   className?: string;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -59,19 +62,24 @@ export function CopyButton({
       type="button"
       onClick={onCopy}
       aria-live="polite"
+      {...(iconOnly
+        ? { "aria-label": copied ? `${copiedLabel} — ${label}` : label }
+        : {})}
       className={cn(
-        "inline-flex min-h-11 items-center gap-2 rounded-pill border border-linen bg-transparent px-5 py-3 text-sm font-semibold text-cocoa transition-colors hover:border-caramel hover:text-caramel",
+        "inline-flex min-h-11 items-center rounded-pill text-sm font-semibold transition-colors",
+        iconOnly
+          ? "size-11 justify-center border border-linen bg-transparent text-cocoa hover:border-caramel hover:text-caramel"
+          : "gap-2 border border-linen bg-transparent px-5 py-3 text-cocoa hover:border-caramel hover:text-caramel",
         copied && "border-caramel text-caramel",
         className
       )}
-      {...(copied ? { "aria-label": `${copiedLabel} — ${label}` } : {})}
     >
       {copied ? (
         <Check className="size-4" aria-hidden="true" />
       ) : (
         <Copy className="size-4" aria-hidden="true" />
       )}
-      {copied ? copiedLabel : label}
+      {iconOnly ? null : copied ? copiedLabel : label}
     </button>
   );
 }

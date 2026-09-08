@@ -26,7 +26,7 @@ export function DishCard({
   const card = (
     <article
       className={cn(
-        "group flex flex-col overflow-hidden rounded-card bg-ivory shadow-card transition-shadow duration-300 hover:shadow-lift motion-reduce:transition-none",
+        "group flex flex-col overflow-hidden rounded-card bg-ivory shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transition-none motion-reduce:hover:transform-none",
         className
       )}
     >

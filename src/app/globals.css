@@ -152,9 +152,19 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Selection — a warm caramel tint (the interaction colour at rest);
+     butter-tinted on espresso surfaces where caramel would sink away. */
   ::selection {
-    background: #e8dfc8;
+    background: rgba(154, 91, 31, 0.22); /* caramel @ 22% */
     color: #2a1b10;
+  }
+
+  [class~="bg-surface-espresso"] ::selection,
+  [class~="bg-surface-espresso"]::selection,
+  [class~="bg-espresso"] ::selection,
+  [class~="bg-espresso"]::selection {
+    background: rgba(217, 164, 65, 0.32); /* butter @ 32% */
+    color: #fff9ef;
   }
 
   /* Underlined text links get a warm caramel underline (hover: full) */

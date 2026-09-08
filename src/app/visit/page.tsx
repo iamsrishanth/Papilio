@@ -3,6 +3,7 @@ import { Bike, Check, Instagram, MapPin, MessageCircle, Phone } from "lucide-rea
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { CtaButton } from "@/components/site/cta-button";
 import { CopyButton } from "@/components/site/copy-button";
+import { ShareButton } from "@/components/site/share-button";
 import { Reveal } from "@/components/site/reveal";
 import { HoursCard } from "@/components/site/hours-card";
 import { MapEmbed } from "@/components/site/map-embed";
@@ -94,6 +95,16 @@ export default function VisitPage() {
               </CtaButton>
               <CopyButton text={site.fullAddress} />
             </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-linen/70 pt-4">
+              <ShareButton
+                path="/visit"
+                title="Visit Papilio — Excise Colony, Hanamkonda"
+                text="Papilio, H.No. 2-7-741, Excise Colony, Hanamkonda — open daily 8:00 AM to 10:30 PM."
+                label="Share this page"
+                className="-ml-4 text-sm"
+              />
+            </div>
           </div>
 
           <MapEmbed className="lg:col-span-7" />
@@ -131,10 +142,10 @@ export default function VisitPage() {
         <div className="rounded-card bg-ivory p-6 shadow-card lg:col-span-4">
           <h2 className="label-caps text-cocoa">Contact</h2>
           <ul className="mt-4 space-y-3">
-            <li>
+            <li className="flex items-center gap-1">
               <a
                 href={links.phone}
-                className="flex min-h-11 items-center gap-3 rounded-pill px-1 py-1 text-espresso transition-colors hover:text-caramel"
+                className="flex min-h-11 flex-1 items-center gap-3 rounded-pill px-1 py-1 text-espresso transition-colors hover:text-caramel"
               >
                 <span
                   className="flex size-11 shrink-0 items-center justify-center rounded-full bg-linen"
@@ -146,6 +157,13 @@ export default function VisitPage() {
                   <span className="tnum">{site.phoneDisplay}</span>
                 </span>
               </a>
+              <CopyButton
+                text={site.phoneDisplay}
+                label="Copy phone number"
+                copiedLabel="Phone number copied"
+                iconOnly
+                className="ml-1 shrink-0"
+              />
             </li>
             <li>
               <a

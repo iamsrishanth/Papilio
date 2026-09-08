@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Copy, X } from "lucide-react";
 import Image from "next/image";
 import {
   Dialog,
@@ -16,7 +16,9 @@ import { cn } from "@/lib/utils";
 /**
  * PhotoLightbox — full-size photo viewer built on the shadcn Dialog.
  * Radix supplies the focus trap, ESC-to-close and scroll lock; arrow
- * keys navigate. Counter uses tabular numerals.
+ * keys navigate. Counter uses tabular numerals. A quiet "copy caption"
+ * pill puts the caption on the clipboard (handy for crediting a photo
+ * when reposting) with an inline confirmation swap.
  */
 export function PhotoLightbox({
   photos,
@@ -80,6 +82,45 @@ export function PhotoLightbox({
     } else if (event.key === "ArrowRight") {
       event.preventDefault();
       goNext();
+    }
+  };
+
+  // Copy caption — clipboard API with a hidden-textarea fallback for
+  // non-secure contexts. Inline confirmation reverts after ~2s.
+  const [captionCopied, setCaptionCopied] = React.useState(false);
+  // A fresh photo means a fresh clipboard confirmation state.
+  React.useEffect(() => {
+    setCaptionCopied(false);
+  }, [activeIndex]);
+  const captionTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (captionTimer.current) clearTimeout(captionTimer.current);
+    };
+  }, []);
+
+  const copyCaption = async () => {
+    if (!photo) return;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(photo.caption);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = photo.caption;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCaptionCopied(true);
+      if (captionTimer.current) clearTimeout(captionTimer.current);
+      captionTimer.current = setTimeout(() => setCaptionCopied(false), 2000);
+    } catch {
+      // Clipboard blocked — keep the label unchanged, no false feedback.
     }
   };
 
@@ -152,6 +193,23 @@ export function PhotoLightbox({
               <ChevronRight className="size-5" aria-hidden="true" />
             </button>
           </div>
+
+          <button
+            type="button"
+            onClick={copyCaption}
+            aria-live="polite"
+            {...(captionCopied
+              ? { "aria-label": "Caption copied" }
+              : {})}
+            className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-cream/25 px-4 py-2 text-xs font-semibold text-cream/70 transition-colors hover:border-butter hover:text-butter"
+          >
+            {captionCopied ? (
+              <Check className="size-3.5" aria-hidden="true" />
+            ) : (
+              <Copy className="size-3.5" aria-hidden="true" />
+            )}
+            {captionCopied ? "Copied" : "Copy caption"}
+          </button>
 
           <p
             className="text-[0.7rem] font-semibold tracking-wide text-cream/45 uppercase sm:hidden"

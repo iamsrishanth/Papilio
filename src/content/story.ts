@@ -17,6 +17,9 @@ export type StoryChapter = {
 export type StoryFounder = {
   name: string;
   role: string;
+  /** Verified personal Instagram handle (from the café's own IG bio / research). */
+  instagramHandle: string;
+  instagramUrl: string;
 };
 
 export type StoryMilestone = {
@@ -64,8 +67,18 @@ export const storyChapters: StoryChapter[] = [
 
 /** Founders, per the café's own Instagram bio. */
 export const storyFounders: StoryFounder[] = [
-  { name: "Radha Suvidha", role: "Patisserie" },
-  { name: "Chef Siddhartha Reddy", role: "Kitchen" },
+  {
+    name: "Radha Suvidha",
+    role: "Patisserie",
+    instagramHandle: "@Radhasuvidha",
+    instagramUrl: "https://www.instagram.com/Radhasuvidha",
+  },
+  {
+    name: "Chef Siddhartha Reddy",
+    role: "Kitchen",
+    instagramHandle: "@ChefSiddharthaReddy",
+    instagramUrl: "https://www.instagram.com/ChefSiddharthaReddy",
+  },
 ];
 
 /** Milestones: opening → community → ratings (values from site.ts). */
