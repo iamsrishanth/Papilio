@@ -44,7 +44,7 @@ export default function NotFound() {
         Open daily 8:00 AM – 10:30 PM ·{" "}
         <Link
           href="/visit"
-          className="font-semibold text-caramel underline-offset-4 hover:underline"
+          className="font-semibold text-caramel link-underline"
         >
           Find the café
         </Link>

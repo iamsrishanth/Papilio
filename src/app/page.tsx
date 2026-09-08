@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   Bike,
+  Instagram,
   MapPin,
   MessageCircle,
   Quote,
@@ -18,6 +19,7 @@ import { HoursCard } from "@/components/site/hours-card";
 import { site, links, whatsappLink, whatsappMessages } from "@/content/site";
 import { verifiedQuotes } from "@/content/reviews";
 import { menu, signatureDishNames, type MenuItem } from "@/content/menu";
+import { galleryPhotos } from "@/content/gallery";
 
 // The four flagship dishes with verified prices (PROMPT.md §8)
 const signatureImages: Record<string, { src: string; alt: string }> = {
@@ -46,6 +48,20 @@ const signatureItems = signatureDishNames
 
 const heroQuote = verifiedQuotes[1]; // "peaceful atmosphere" Google review
 const shortQuote = verifiedQuotes[0]; // "Excellent ambience and tasty food."
+
+// Five representative café moments for the feed strip (existing assets,
+// descriptive alt from content/gallery.ts — never claimed as literal IG
+// posts; the copy stays neutral: "moments from the café").
+const feedPhotoSrcs = [
+  "/images/gallery-interior.png",
+  "/images/gallery-coffee-pour.png",
+  "/images/patisserie-counter.png",
+  "/images/gallery-baking.png",
+  "/images/gallery-spread.png",
+];
+const feedPhotos = feedPhotoSrcs
+  .map((src) => galleryPhotos.find((p) => p.src === src))
+  .filter((p): p is (typeof galleryPhotos)[number] => Boolean(p));
 
 export default function HomePage() {
   return (
@@ -87,7 +103,7 @@ export default function HomePage() {
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
           <Link
             href="/menu"
-            className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel underline-offset-4 hover:underline"
+            className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel link-underline"
           >
             See the full menu — 21 sections, 187 items
             <ArrowRight
@@ -101,7 +117,7 @@ export default function HomePage() {
           />
           <Link
             href="/menu?signature=1"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-cocoa underline-offset-4 hover:text-caramel hover:underline"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-cocoa link-underline hover:text-caramel"
           >
             Filter the menu to these four
             <ArrowRight
@@ -251,6 +267,62 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ------------------------------------------------ From the feed */}
+      <section
+        aria-labelledby="feed-heading"
+        className="mx-auto w-full max-w-[1200px] px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24"
+      >
+        <Reveal className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+          <div className="max-w-xl">
+            <SectionEyebrow>From the café</SectionEyebrow>
+            <h2
+              id="feed-heading"
+              className="font-display mt-5 text-h2 font-semibold text-espresso"
+            >
+              Follow the café
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-cocoa">
+              New cakes at the counter, the day&rsquo;s bakes and quiet corners
+              of the room — our {site.igCommunity} sees them first.
+            </p>
+          </div>
+          <a
+            href={site.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center gap-2.5 text-sm font-semibold text-caramel link-underline"
+            aria-label={`Papilio on Instagram — ${site.instagramHandle}`}
+          >
+            <Instagram className="size-4" aria-hidden="true" />
+            {site.instagramHandle}
+          </a>
+        </Reveal>
+
+        <Reveal delay={0.08}>
+          <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {feedPhotos.map((photo) => (
+              <li key={photo.src}>
+                <a
+                  href={site.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`See more on Instagram — ${photo.caption}`}
+                  className="group relative block aspect-square overflow-hidden rounded-card bg-linen/40 shadow-card transition-shadow duration-300 hover:shadow-lift motion-reduce:transition-none"
+                >
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:group-hover:transform-none motion-reduce:transition-none"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      </section>
+
       {/* ------------------------------------------------ Visit band */}
       <section
         aria-labelledby="visit-heading"
@@ -286,7 +358,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/visit#faq"
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cocoa underline-offset-4 hover:text-caramel hover:underline"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cocoa link-underline hover:text-caramel"
               >
                 <MessageCircle
                   className="size-4 text-caramel"

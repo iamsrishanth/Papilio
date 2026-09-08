@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Check, ChevronLeft, ChevronRight, Copy, X } from "lucide-react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import {
   Dialog,
   DialogClose,
@@ -20,6 +20,9 @@ import { cn } from "@/lib/utils";
  * pill puts the caption on the clipboard (handy for crediting a photo
  * when reposting) with an inline confirmation swap.
  */
+/** Shared sizes — the preload mirrors the live <Image> exactly. */
+const LIGHTBOX_SIZES = "(max-width: 767px) 92vw, 1000px";
+
 export function PhotoLightbox({
   photos,
   index,
@@ -54,6 +57,43 @@ export function PhotoLightbox({
     if (index === null || total === 0) return;
     onIndexChange((index + 1) % total);
   }, [index, total, onIndexChange]);
+
+  // Preload the NEXT photo with the exact optimized URL/sizes the
+  // <Image> below will request (getImageProps mirrors its loader), so
+  // arrow-key and swipe navigation swaps instantly instead of
+  // re-fetching. Implemented as <link rel=preload as=image
+  // imagesrcset/imagesizes> — set via setAttribute because the
+  // .imageSrcSet IDL property is not honored for dynamically inserted
+  // links (verified in Chromium). The link is removed on cleanup; the
+  // fetched variant stays in the HTTP cache.
+  React.useEffect(() => {
+    if (index === null || total < 2) return;
+    const next = photos[(index + 1) % total];
+    if (!next) return;
+    const { props } = getImageProps({
+      src: next.src,
+      alt: "",
+      width: next.width,
+      height: next.height,
+      sizes: LIGHTBOX_SIZES,
+    });
+    const srcSet = typeof props.srcSet === "string" ? props.srcSet : "";
+    const link = document.createElement("link");
+    link.setAttribute("rel", "preload");
+    link.setAttribute("as", "image");
+    if (typeof props.src === "string") {
+      // href doubles as the fallback for engines without imagesrcset
+      link.setAttribute("href", props.src);
+    }
+    if (srcSet) {
+      link.setAttribute("imagesrcset", srcSet);
+      link.setAttribute("imagesizes", LIGHTBOX_SIZES);
+    }
+    document.head.appendChild(link);
+    return () => {
+      link.remove();
+    };
+  }, [index, photos, total]);
 
   // Touch swipe — horizontal flicks navigate, vertical drags keep
   // scrolling the dialog. 48px threshold with a 64px vertical gate.
@@ -156,7 +196,7 @@ export function PhotoLightbox({
             alt={photo.alt}
             width={photo.width}
             height={photo.height}
-            sizes="(max-width: 767px) 92vw, 1000px"
+            sizes={LIGHTBOX_SIZES}
             className="h-auto max-h-[60vh] w-auto max-w-full rounded-card object-contain sm:max-h-[68vh]"
           />
         </div>

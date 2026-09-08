@@ -9,6 +9,7 @@ import {
   Coffee,
   Croissant,
   LayoutGrid,
+  Maximize2,
 } from "lucide-react";
 import type { GalleryPhoto, GalleryTag } from "@/content/gallery";
 import { galleryTagLabels } from "@/content/gallery";
@@ -143,7 +144,7 @@ export function GalleryGrid({
               type="button"
               onClick={() => setOpenIndex(index)}
               aria-label={`View larger: ${photo.caption}`}
-              className="group block w-full overflow-hidden rounded-card bg-linen/40 shadow-card transition-shadow duration-300 hover:shadow-lift motion-reduce:transition-none"
+              className="group relative block w-full overflow-hidden rounded-card bg-linen/40 shadow-card transition-shadow duration-300 hover:shadow-lift motion-reduce:transition-none"
             >
               <Image
                 src={photo.src}
@@ -154,6 +155,16 @@ export function GalleryGrid({
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 className="h-auto w-full rounded-card object-cover transition-transform duration-500 ease-out group-hover:-translate-y-1 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:transition-none"
               />
+              {/* Expand affordance — signals that the photo opens the
+                  lightbox. Pointer-events-none so the click stays on the
+                  photo; hidden on touch (no hover), where the whole
+                  figure is a direct tap target anyway. */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3 bottom-3 flex size-9 items-center justify-center rounded-pill bg-cream/90 text-espresso opacity-0 shadow-card backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none"
+              >
+                <Maximize2 className="size-4" />
+              </span>
             </button>
             <figcaption className="mt-2.5 text-sm leading-relaxed text-cocoa">
               {photo.caption}

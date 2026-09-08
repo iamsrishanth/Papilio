@@ -78,7 +78,7 @@ export default function VisitPage() {
 
             <a
               href={links.phone}
-              className="mt-4 inline-flex items-center gap-2.5 text-base font-semibold text-espresso underline-offset-4 hover:text-caramel hover:underline"
+              className="mt-4 inline-flex items-center gap-2.5 text-base font-semibold text-espresso link-underline hover:text-caramel"
             >
               <Phone className="size-4 text-caramel" aria-hidden="true" />
               <span className="tnum">{site.phoneDisplay}</span>

@@ -101,7 +101,7 @@ export function SiteHeader() {
             href={links.zomato}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden text-sm text-cocoa underline-offset-4 transition-colors hover:text-caramel hover:underline xl:inline-flex"
+            className="hidden text-sm text-cocoa link-underline transition-colors hover:text-caramel xl:inline-flex"
           >
             Also on Zomato
           </a>

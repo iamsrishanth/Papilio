@@ -197,9 +197,12 @@ export function MenuExplorer() {
     return haystack.includes(q);
   };
 
-  // Derived once per render — 187 items, negligible cost.
-  const sections = menu.map((cat) => ({
+  // Derived once per render — 187 items, negligible cost. `idx` is the
+  // ORIGINAL menu order, so section numbers (01–21) stay stable under
+  // any filter combination.
+  const sections = menu.map((cat, idx) => ({
     cat,
+    idx,
     items: cat.items.filter(matches),
   }));
   const totalCount = sections.reduce((s, x) => s + x.items.length, 0);
@@ -489,7 +492,7 @@ export function MenuExplorer() {
             </div>
           ) : null}
 
-          {sections.map(({ cat, items }) => {
+          {sections.map(({ cat, idx, items }) => {
             const dark = cat.id === "coffee"; // espresso coffee band w/ steam
             if (items.length === 0) return null;
             return (
@@ -512,15 +515,27 @@ export function MenuExplorer() {
                 ) : null}
                 <div className="relative">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <h2
-                      id={`${cat.id}-heading`}
-                      className={cn(
-                        "font-display text-h3 font-medium print:text-espresso",
-                        dark ? "text-butter" : "text-espresso"
-                      )}
-                    >
-                      {cat.label}
-                    </h2>
+                    <div className="flex items-baseline gap-3">
+                      {/* Editorial section number — stable across filters */}
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "tnum text-[0.7rem] font-semibold tracking-[0.14em]",
+                          dark ? "text-butter/70" : "text-caramel/80"
+                        )}
+                      >
+                        {String(idx + 1).padStart(2, "0")}
+                      </span>
+                      <h2
+                        id={`${cat.id}-heading`}
+                        className={cn(
+                          "font-display text-h3 font-medium print:text-espresso",
+                          dark ? "text-butter" : "text-espresso"
+                        )}
+                      >
+                        {cat.label}
+                      </h2>
+                    </div>
                     <span
                       className={cn(
                         "label-caps print:text-cocoa",

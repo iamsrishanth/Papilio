@@ -131,7 +131,7 @@ export default function PatisseriePage() {
         <div className="mt-8">
           <Link
             href="/menu#counter-desserts"
-            className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel underline-offset-4 hover:underline"
+            className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel link-underline"
           >
             See every dessert on the full menu
             <ArrowRight

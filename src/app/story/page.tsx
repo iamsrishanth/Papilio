@@ -217,7 +217,7 @@ export default function StoryPage() {
                   href={founder.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-cocoa transition-colors hover:text-caramel hover:underline"
+                  className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-cocoa link-underline transition-colors hover:text-caramel"
                   aria-label={`${founder.name} on Instagram — ${founder.instagramHandle}`}
                 >
                   <Instagram className="size-4 text-caramel transition-transform duration-300 group-hover:-rotate-6 motion-reduce:transition-none motion-reduce:group-hover:transform-none" aria-hidden="true" />

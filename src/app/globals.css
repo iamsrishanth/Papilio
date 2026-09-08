@@ -249,6 +249,28 @@
   text-transform: uppercase;
 }
 
+/* Animated link underline — a 1.5px caramel rule that grows from the
+   left on hover. Painted as a background-image (outside the text box,
+   via 3px bottom padding on the inline box — no layout shift, no
+   descender collision), so it animates on the compositor-friendly
+   background-size property. The global reduced-motion block collapses
+   the transition to 0.01ms. For plain text links only — pill-shaped
+   quiet links keep text-decoration underlines (a bg rule would sit
+   inside the pill padding). */
+@utility link-underline {
+  padding-bottom: 3px;
+  background-image: linear-gradient(90deg, #9a5b1f, #9a5b1f);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1.5px;
+  transition: background-size 0.3s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1.5px;
+  }
+}
+
 /* Editorial drop cap — Playfair initial in caramel, for story prose.
    Applied to the first paragraph of a chapter; never on dark surfaces. */
 .drop-cap::first-letter {
