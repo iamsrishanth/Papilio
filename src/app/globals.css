@@ -145,6 +145,22 @@
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    /* Native checkboxes/radios/etc. pick up the interaction colour */
+    accent-color: #9a5b1f;
+  }
+
+  /* Editorial line breaking: balance the display headings (ragged
+     widows/orphans on two-line Playfair headings read unedited), and
+     wrap body paragraphs with pretty (avoids lonely last words).
+     Both are no-ops where unsupported. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   body {
@@ -269,6 +285,13 @@
   &:focus-visible {
     background-size: 100% 1.5px;
   }
+}
+
+/* Keyboard-hint chip — the small “/” (menu search) and “G” (gallery
+   lightbox) affordances. Visual styles only; position/visibility stay
+   at the usage site so the same chip works inside inputs and inline. */
+@utility kbd-chip {
+  @apply rounded-tag border border-linen bg-cream px-1.5 py-0.5 font-sans text-xs font-semibold text-cocoa/70;
 }
 
 /* Editorial drop cap — Playfair initial in caramel, for story prose.

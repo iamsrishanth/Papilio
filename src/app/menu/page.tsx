@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { MenuExplorer } from "@/components/menu/menu-explorer";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
+import { ReadingProgress } from "@/components/site/reading-progress";
 import { VegGlyph } from "@/components/site/veg-glyph";
 import { JsonLd } from "@/components/site/json-ld";
 import { breadcrumbLd } from "@/lib/seo";
@@ -32,6 +33,9 @@ export const metadata: Metadata = {
 export default function MenuPage() {
   return (
     <div className="mx-auto w-full max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+      {/* Wayfinding hairline for the very long menu scroll (187 items,
+          21 sections) — same caramel progress bar as /story. */}
+      <ReadingProgress />
       <JsonLd data={breadcrumbLd([{ name: "Menu", path: "/menu" }])} />
 
       {/* Print masthead — visible only on the printed sheet, so a paper

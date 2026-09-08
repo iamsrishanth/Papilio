@@ -20,11 +20,13 @@ import { cn } from "@/lib/utils";
  * GalleryGrid — CSS-columns masonry with a CSS-only hover parallax
  * (scale 1.02 + slight lift, disabled under prefers-reduced-motion).
  * Subject filter chips narrow the set (counts derive from the data);
- * the lightbox navigates within the filtered set. The chosen tag is
- * deep-linkable (/gallery?tag=patisserie) and synced to the address
- * bar without history entries, mirroring the menu's filter deep links.
- * Clicking a photo opens the PhotoLightbox; state lives here so the
- * page itself stays a server component.
+ * the lightbox navigates within the filtered set. Both the tag AND the
+ * open photo are deep-linkable (/gallery?tag=patisserie&photo=2) and
+ * synced to the address bar without history entries, mirroring the
+ * menu's filter deep links. Keyboard "g" opens the lightbox (the
+ * gallery sibling of the menu's "/" search focus). Clicking a photo
+ * opens the PhotoLightbox; state lives here so the page itself stays a
+ * server component.
  */
 
 type TagFilter = "all" | GalleryTag;
@@ -46,28 +48,59 @@ export function GalleryGrid({
 }) {
   const [openIndex, setOpenIndex] = React.useState<number | null>(null);
   const [tag, setTag] = React.useState<TagFilter>("all");
+  // Guards the URL-sync effect: it must not run with pre-seed state on
+  // mount (a stripped "all/null" write races the router reading the
+  // deep-link params, then the seed would re-read the STRIPPED URL and
+  // undo itself). Only interaction-driven changes sync to the URL.
+  const [seeded, setSeeded] = React.useState(false);
   const searchParams = useSearchParams();
 
-  // Deep link: /gallery?tag=patisserie seeds the filter (unknown values
-  // are ignored). Runs on mount and on client-side param changes.
+  // Deep link: /gallery?tag=patisserie seeds the filter; ?photo=<n> also
+  // opens the lightbox on photo n of that filtered set (indexes are
+  // relative to the set the tag selects). STICKY by design: absent
+  // params never reset state, so late router re-reads (hydration
+  // reconcile, effect re-runs with an already-synced URL) can't undo a
+  // seeded or interaction-set value; present-but-invalid values are
+  // still corrected (unknown tag → All, out-of-range photo → closed).
   React.useEffect(() => {
     const t = searchParams.get("tag");
-    if (!t) return;
-    const known = galleryTagLabels.some(({ id }) => id === t);
-    setTag(known ? (t as TagFilter) : "all");
-  }, [searchParams]);
+    let nextTag: TagFilter | null = null;
+    if (t !== null) {
+      const known = galleryTagLabels.some(({ id }) => id === t);
+      nextTag = known ? (t as TagFilter) : "all";
+      setTag(nextTag);
+    }
 
-  // Shareable state: keep the address bar in sync without creating
-  // history entries (replaceState, not router.push).
+    const raw = searchParams.get("photo");
+    if (raw !== null) {
+      const effective: TagFilter = nextTag ?? tag;
+      const count =
+        effective === "all"
+          ? photos.length
+          : photos.filter((p) => p.tags.includes(effective)).length;
+      const n = Number.parseInt(raw, 10);
+      setOpenIndex(Number.isInteger(n) && n >= 0 && n < count ? n : null);
+    }
+
+    setSeeded(true);
+  }, [searchParams, photos, tag]);
+
+  // Shareable state: keep the address bar in sync (tag + open photo —
+  // they compose: ?tag=patisserie&photo=2) without creating history
+  // entries (replaceState, not router.push). Skipped until the deep-link
+  // seed has committed — see the `seeded` note above.
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const qs = tag === "all" ? "" : `?tag=${tag}`;
+    if (!seeded || typeof window === "undefined") return;
+    const params: string[] = [];
+    if (tag !== "all") params.push(`tag=${tag}`);
+    if (openIndex !== null) params.push(`photo=${openIndex}`);
+    const qs = params.length > 0 ? `?${params.join("&")}` : "";
     window.history.replaceState(
       null,
       "",
       `${window.location.pathname}${qs}${window.location.hash}`
     );
-  }, [tag]);
+  }, [seeded, tag, openIndex]);
 
   const filtered =
     tag === "all" ? photos : photos.filter((p) => p.tags.includes(tag));
@@ -90,6 +123,43 @@ export function GalleryGrid({
     { id: "all", label: "All" },
     ...galleryTagLabels,
   ];
+
+  // Keyboard "g" opens the lightbox on the first photo of the current
+  // filter — the gallery sibling of the menu's "/" search focus (hint
+  // chip rendered beside the filters). Skips modifier combos and any
+  // context where the keystroke is text (inputs, textareas, selects,
+  // contenteditable), and does nothing while the dialog is open.
+  React.useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "g" && event.key !== "G") return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const el = document.activeElement;
+      if (
+        el instanceof HTMLElement &&
+        (el.isContentEditable ||
+          el.tagName === "INPUT" ||
+          el.tagName === "TEXTAREA" ||
+          el.tagName === "SELECT")
+      ) {
+        return;
+      }
+      if (openIndex !== null || filtered.length === 0) return;
+      event.preventDefault();
+      setOpenIndex(0);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [openIndex, filtered.length]);
+
+  // Canonical share URL for the currently open photo (composes with
+  // the active tag, e.g. /gallery?tag=patisserie&photo=2) — handed to
+  // the lightbox's "Copy link" action. Absolute, so the copied link is
+  // paste-ready in chats. SSR renders a closed lightbox, so this is
+  // only computed client-side where a photo is open.
+  const shareUrl =
+    openIndex !== null
+      ? `${typeof window === "undefined" ? "http://localhost:3000" : window.location.origin}${window.location.pathname}${tag === "all" ? "?" : `?tag=${tag}&`}photo=${openIndex}`
+      : null;
 
   return (
     <>
@@ -126,6 +196,15 @@ export function GalleryGrid({
 
           <p aria-live="polite" className="tnum ml-1 text-sm text-cocoa/80">
             {filtered.length} of {total} photos
+          </p>
+
+          {/* Keyboard affordance — mirrors the menu search's "/" hint. */}
+          <p className="hidden items-center gap-1.5 text-xs text-cocoa/60 sm:flex">
+            Press
+            <kbd className="kbd-chip" aria-hidden="true">
+              G
+            </kbd>
+            to open the lightbox
           </p>
         </div>
 
@@ -177,6 +256,7 @@ export function GalleryGrid({
         photos={filtered}
         index={openIndex}
         onIndexChange={setOpenIndex}
+        shareUrl={shareUrl}
       />
     </>
   );

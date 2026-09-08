@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
+  ArrowUpRight,
   Bike,
   Instagram,
   MapPin,
@@ -339,8 +340,16 @@ export default function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`Follow Papilio on Instagram — ${site.instagramHandle}`}
-                className="group flex aspect-square flex-col items-center justify-center gap-3 rounded-card bg-espresso p-4 pb-6 text-center shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transition-none motion-reduce:hover:transform-none"
+                className="group relative flex aspect-square flex-col items-center justify-center gap-3 rounded-card bg-espresso p-4 pb-6 text-center shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transition-none motion-reduce:hover:transform-none"
               >
+                {/* Hover arrow — quiet top-right affordance that slides in
+                    on hover (the outbound signal), butter on espresso. */}
+                <span
+                  aria-hidden="true"
+                  className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-pill bg-cream/10 text-butter opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 -translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:transform-none"
+                >
+                  <ArrowUpRight className="size-4" />
+                </span>
                 <span
                   aria-hidden="true"
                   className="flex size-12 items-center justify-center rounded-full bg-cream/10 transition-transform duration-300 group-hover:-rotate-6 motion-reduce:transition-none motion-reduce:group-hover:transform-none"

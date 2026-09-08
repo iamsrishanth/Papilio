@@ -409,7 +409,7 @@ export function MenuExplorer() {
             ) : (
               <kbd
                 aria-hidden="true"
-                className="pointer-events-none absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-tag border border-linen bg-cream px-1.5 py-0.5 font-sans text-xs font-semibold text-cocoa/70 sm:block"
+                className="kbd-chip pointer-events-none absolute top-1/2 right-4 hidden -translate-y-1/2 sm:block"
               >
                 /
               </kbd>

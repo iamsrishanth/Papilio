@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronLeft, ChevronRight, Copy, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Copy, Link2, X } from "lucide-react";
 import Image, { getImageProps } from "next/image";
 import {
   Dialog,
@@ -11,14 +11,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { GalleryPhoto } from "@/content/gallery";
+import { galleryTagLabels } from "@/content/gallery";
 import { cn } from "@/lib/utils";
 
 /**
  * PhotoLightbox — full-size photo viewer built on the shadcn Dialog.
  * Radix supplies the focus trap, ESC-to-close and scroll lock; arrow
- * keys navigate. Counter uses tabular numerals. A quiet "copy caption"
- * pill puts the caption on the clipboard (handy for crediting a photo
- * when reposting) with an inline confirmation swap.
+ * keys navigate. Counter uses tabular numerals. The photo's subject
+ * tags render as small butter-on-espresso chips under the caption, and
+ * two quiet clipboard actions close the footer: "copy caption" (for
+ * crediting a repost) and "copy link" (the /gallery?tag=…&photo=n deep
+ * link that reopens this exact photo) — both confirm inline.
  */
 /** Shared sizes — the preload mirrors the live <Image> exactly. */
 const LIGHTBOX_SIZES = "(max-width: 767px) 92vw, 1000px";
@@ -27,12 +30,16 @@ export function PhotoLightbox({
   photos,
   index,
   onIndexChange,
+  shareUrl,
   className,
 }: {
   photos: GalleryPhoto[];
   /** null = closed; otherwise the index of the open photo. */
   index: number | null;
   onIndexChange: (index: number | null) => void;
+  /** Deep link for the open photo (?tag=…&photo=n); renders the
+   * "Copy link" action when provided. */
+  shareUrl?: string | null;
   className?: string;
 }) {
   const open = index !== null;
@@ -133,40 +140,62 @@ export function PhotoLightbox({
     }
   };
 
-  // Copy caption — clipboard API with a hidden-textarea fallback for
-  // non-secure contexts. Inline confirmation reverts after ~2s.
+  // Copy actions — clipboard API with a hidden-textarea fallback for
+  // non-secure contexts. Inline confirmations revert after ~2s.
   const [captionCopied, setCaptionCopied] = React.useState(false);
+  const [linkCopied, setLinkCopied] = React.useState(false);
+  const captionTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const linkTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // A fresh photo means a fresh clipboard confirmation state.
   React.useEffect(() => {
     setCaptionCopied(false);
+    setLinkCopied(false);
   }, [activeIndex]);
-  const captionTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   React.useEffect(() => {
     return () => {
       if (captionTimer.current) clearTimeout(captionTimer.current);
+      if (linkTimer.current) clearTimeout(linkTimer.current);
     };
   }, []);
+
+  const writeClipboard = async (text: string) => {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+  };
 
   const copyCaption = async () => {
     if (!photo) return;
     try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(photo.caption);
-      } else {
-        const ta = document.createElement("textarea");
-        ta.value = photo.caption;
-        ta.setAttribute("readonly", "");
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-      }
+      await writeClipboard(photo.caption);
       setCaptionCopied(true);
       if (captionTimer.current) clearTimeout(captionTimer.current);
       captionTimer.current = setTimeout(() => setCaptionCopied(false), 2000);
+    } catch {
+      // Clipboard blocked — keep the label unchanged, no false feedback.
+    }
+  };
+
+  // Copy deep link — mirrors the caption action's confirmation swap.
+  const copyLink = async () => {
+    if (!shareUrl) return;
+    try {
+      await writeClipboard(shareUrl);
+      setLinkCopied(true);
+      if (linkTimer.current) clearTimeout(linkTimer.current);
+      linkTimer.current = setTimeout(() => setLinkCopied(false), 2000);
     } catch {
       // Clipboard blocked — keep the label unchanged, no false feedback.
     }
@@ -205,6 +234,11 @@ export function PhotoLightbox({
             width={photo.width}
             height={photo.height}
             sizes={LIGHTBOX_SIZES}
+            // The open photo is the page's main content (and, for
+            // ?photo= deep links, the LCP) — load it eagerly; the
+            // retained photo during the close animation is already
+            // in cache.
+            priority={open}
             className="h-auto max-h-[60vh] w-auto max-w-full rounded-card object-contain sm:max-h-[68vh]"
           />
         </div>
@@ -216,6 +250,30 @@ export function PhotoLightbox({
           <DialogTitle className="text-center text-base font-medium leading-relaxed text-cream">
             {photo.caption}
           </DialogTitle>
+
+          {/* Subject tags — small butter-on-espresso chips (the lightbox
+              surface is deep espresso, so butter accents are DESIGN.md
+              legal). Informative only; same labels as the filter. */}
+          {photo.tags.length > 0 ? (
+            <ul
+              className="flex flex-wrap items-center justify-center gap-1.5"
+              aria-label="Photo subjects"
+            >
+              {photo.tags.map((t) => {
+                const label =
+                  galleryTagLabels.find(({ id }) => id === t)?.label ?? t;
+                return (
+                  <li
+                    key={t}
+                    className="rounded-pill border border-cream/20 bg-cream/10 px-2.5 py-1 text-[0.65rem] font-semibold tracking-wider text-butter/80 uppercase"
+                  >
+                    {label}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : null}
+
           <DialogDescription className="sr-only">
             {photo.alt}
           </DialogDescription>
@@ -242,22 +300,41 @@ export function PhotoLightbox({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={copyCaption}
-            aria-live="polite"
-            {...(captionCopied
-              ? { "aria-label": "Caption copied" }
-              : {})}
-            className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-cream/25 px-4 py-2 text-xs font-semibold text-cream/70 transition-colors hover:border-butter hover:text-butter"
-          >
-            {captionCopied ? (
-              <Check className="size-3.5" aria-hidden="true" />
-            ) : (
-              <Copy className="size-3.5" aria-hidden="true" />
-            )}
-            {captionCopied ? "Copied" : "Copy caption"}
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={copyCaption}
+              aria-live="polite"
+              {...(captionCopied
+                ? { "aria-label": "Caption copied" }
+                : {})}
+              className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-cream/25 px-4 py-2 text-xs font-semibold text-cream/70 transition-colors hover:border-butter hover:text-butter"
+            >
+              {captionCopied ? (
+                <Check className="size-3.5" aria-hidden="true" />
+              ) : (
+                <Copy className="size-3.5" aria-hidden="true" />
+              )}
+              {captionCopied ? "Copied" : "Copy caption"}
+            </button>
+
+            {shareUrl ? (
+              <button
+                type="button"
+                onClick={copyLink}
+                aria-live="polite"
+                {...(linkCopied ? { "aria-label": "Link copied" } : {})}
+                className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-cream/25 px-4 py-2 text-xs font-semibold text-cream/70 transition-colors hover:border-butter hover:text-butter"
+              >
+                {linkCopied ? (
+                  <Check className="size-3.5" aria-hidden="true" />
+                ) : (
+                  <Link2 className="size-3.5" aria-hidden="true" />
+                )}
+                {linkCopied ? "Copied" : "Copy link"}
+              </button>
+            ) : null}
+          </div>
 
           <p
             className="text-[0.7rem] font-semibold tracking-wide text-cream/45 uppercase sm:hidden"
