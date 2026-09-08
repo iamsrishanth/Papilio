@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Instagram, Quote } from "lucide-react";
+import { ArrowRight, Instagram, Quote } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
+import { CtaButton } from "@/components/site/cta-button";
 import { Reveal } from "@/components/site/reveal";
 import { ReadingProgress } from "@/components/site/reading-progress";
 import { WingUnfold } from "@/components/story/wing-unfold";
@@ -294,6 +295,45 @@ export default function StoryPage() {
           Papilio — {site.tagline}, Excise Colony, Hanamkonda. Established{" "}
           {site.established}.
         </p>
+      </section>
+
+      {/* ------------------------------------------------ End invitation */}
+      {/* The story page's single filled primary — the narrative hands
+          the reader to /visit at the exact moment the story ends. */}
+      <section aria-labelledby="next-heading" className="pb-20 lg:pb-28">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-card bg-surface-espresso p-8 text-cream shadow-lift sm:p-10 lg:p-12">
+            {/* butter wing glow — CSS-only ambience, same grammar as the
+                patisserie espresso band and the composer preview */}
+            <div
+              aria-hidden="true"
+              className="absolute -top-16 -right-10 h-44 w-44 rounded-full bg-butter/10 blur-2xl"
+            />
+            <div className="relative max-w-2xl">
+              <SectionEyebrow className="border border-butter/30 bg-transparent text-butter">
+                Next
+              </SectionEyebrow>
+              <h2
+                id="next-heading"
+                className="font-display mt-5 text-h2 font-semibold text-cream"
+              >
+                Come see it for yourself
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-cream/80">
+                The café is open {site.hours.display},{" "}
+                {site.hours.days.replace(/^Open\s+/i, "").toLowerCase()},
+                in Excise Colony, Hanamkonda — and the last chapter of this
+                story is a table.
+              </p>
+              <div className="mt-8">
+                <CtaButton variant="primary" href="/visit">
+                  Plan your visit
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </CtaButton>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
     </div>
   );

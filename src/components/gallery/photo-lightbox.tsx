@@ -17,11 +17,12 @@ import { cn } from "@/lib/utils";
 /**
  * PhotoLightbox — full-size photo viewer built on the shadcn Dialog.
  * Radix supplies the focus trap, ESC-to-close and scroll lock; arrow
- * keys navigate. Counter uses tabular numerals. The photo's subject
- * tags render as small butter-on-espresso chips under the caption, and
- * two quiet clipboard actions close the footer: "copy caption" (for
- * crediting a repost) and "copy link" (the /gallery?tag=…&photo=n deep
- * link that reopens this exact photo) — both confirm inline.
+ * keys navigate; a filmstrip of thumbnails (sm+) offers direct jumps.
+ * Counter uses tabular numerals. The photo's subject tags render as
+ * small butter-on-espresso chips under the caption, and two quiet
+ * clipboard actions close the footer: "copy caption" (for crediting
+ * a repost) and "copy link" (the /gallery?tag=…&photo=n deep link
+ * that reopens this exact photo) — both confirm inline.
  */
 /** Shared sizes — the preload mirrors the live <Image> exactly. */
 const LIGHTBOX_SIZES = "(max-width: 767px) 92vw, 1000px";
@@ -201,6 +202,32 @@ export function PhotoLightbox({
     }
   };
 
+  // Filmstrip wayfinding: keep the ACTIVE thumbnail in view — the
+  // strip overflows on narrow viewports, and arrow-key navigation
+  // could otherwise move the active thumb off-screen. Computed
+  // scrollLeft (centered) instead of scrollIntoView so no ancestor
+  // (the dialog, the page) gets scrolled as a side effect. Honors
+  // prefers-reduced-motion with an instant jump.
+  const stripRef = React.useRef<HTMLElement | null>(null);
+  React.useEffect(() => {
+    if (index === null) return;
+    const nav = stripRef.current;
+    if (!nav) return;
+    const active = nav.querySelector<HTMLButtonElement>(
+      "button[aria-current=\"true\"]"
+    );
+    if (!active) return;
+    const target =
+      active.offsetLeft + active.offsetWidth / 2 - nav.clientWidth / 2;
+    // Clamp to the REAL scroll range — scrollWidth alone would let the
+    // guard below compare against values the browser will never keep.
+    const max = Math.max(0, nav.scrollWidth - nav.clientWidth);
+    const clamped = Math.max(0, Math.min(target, max));
+    if (Math.abs(nav.scrollLeft - clamped) < 2) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    nav.scrollTo({ left: clamped, behavior: reduced ? "auto" : "smooth" });
+  }, [index, activeIndex]);
+
   if (!photo) return null;
 
   return (
@@ -300,7 +327,52 @@ export function PhotoLightbox({
             </button>
           </div>
 
+          {/* Filmstrip — direct jumps to any photo. Desktop/tablet
+              affordance (mobile keeps swipe + arrows; the strip would
+              crowd the 390px dialog). Active thumb: butter ring; the
+              row scrolls horizontally if the viewport is narrow. */}
+          <nav
+            ref={stripRef}
+            aria-label="Jump to a photo"
+            className="hidden w-full justify-center gap-2 overflow-x-auto pt-1 sm:flex"
+          >
+            {photos.map((p, i) => (
+              <button
+                key={p.src}
+                type="button"
+                onClick={() => onIndexChange(i)}
+                aria-label={`Open photo ${i + 1} of ${total}`}
+                aria-current={i === activeIndex || undefined}
+                className={cn(
+                  "relative size-14 shrink-0 overflow-hidden rounded-tag border transition-opacity",
+                  i === activeIndex
+                    ? "border-butter opacity-100"
+                    : "border-cream/25 opacity-70 hover:opacity-100"
+                )}
+              >
+                <Image
+                  src={p.src}
+                  alt=""
+                  fill
+                  sizes="56px"
+                  className="object-cover"
+                />
+                {i === activeIndex ? (
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 rounded-tag ring-1 ring-butter ring-offset-0"
+                  />
+                ) : null}
+              </button>
+            ))}
+          </nav>
+
           <div className="flex flex-wrap items-center justify-center gap-2">
+            {/* Explains what "Copy link" does without cluttering the
+                visible label (screen readers get the full sentence). */}
+            <p id="lightbox-copy-link-hint" className="sr-only">
+              Copies a link that reopens this exact photo in the gallery.
+            </p>
             <button
               type="button"
               onClick={copyCaption}
@@ -323,6 +395,7 @@ export function PhotoLightbox({
                 type="button"
                 onClick={copyLink}
                 aria-live="polite"
+                aria-describedby="lightbox-copy-link-hint"
                 {...(linkCopied ? { "aria-label": "Link copied" } : {})}
                 className="inline-flex min-h-11 items-center gap-2 rounded-pill border border-cream/25 px-4 py-2 text-xs font-semibold text-cream/70 transition-colors hover:border-butter hover:text-butter"
               >

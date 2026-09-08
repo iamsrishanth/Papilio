@@ -318,15 +318,25 @@ export default function HomePage() {
                     className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:group-hover:transform-none motion-reduce:transition-none"
                   />
                   {/* Caption scrim — cream text on an espresso gradient at
-                      the foot of the tile; mouse-only reveal (the aria-label
-                      already carries the caption for AT). */}
+                      the foot of the tile; reveals on hover AND keyboard
+                      focus (the aria-label already carries the caption for
+                      AT). */}
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-espresso/80 via-espresso/35 to-transparent px-3.5 pt-10 pb-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-espresso/80 via-espresso/35 to-transparent px-3.5 pt-10 pb-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
                   >
                     <span className="line-clamp-2 text-xs font-medium leading-snug text-cream">
                       {photo.caption}
                     </span>
+                  </span>
+                  {/* Outbound arrow — same grammar as the follow tile
+                      (butter on espresso), announcing the Instagram
+                      destination on hover/focus. */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-pill bg-espresso/60 text-butter opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+                  >
+                    <ArrowUpRight className="size-4" />
                   </span>
                 </a>
               </li>

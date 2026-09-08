@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Instagram, MessageCircle, Quote } from "lucide-react";
+import { Suspense } from "react";
+import { ArrowDown, ArrowRight, Instagram, MessageCircle, Quote } from "lucide-react";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
 import { CtaButton } from "@/components/site/cta-button";
 import { Reveal } from "@/components/site/reveal";
 import { DishCard } from "@/components/menu/dish-card";
+import { CakeInquiryForm } from "@/components/patisserie/cake-inquiry-form";
 import { JsonLd } from "@/components/site/json-ld";
 import { breadcrumbLd } from "@/lib/seo";
 import { menu, type MenuItem } from "@/content/menu";
@@ -48,6 +50,11 @@ const featuredNames = [
 const featuredItems = featuredNames
   .map((name) => patisserieItems.find((i) => i.name === name))
   .filter((i): i is MenuItem => Boolean(i));
+
+/** Whole cakes (the menu's `cakes` section) — the only items that
+ * get an “Ask about this cake” composer deep link, since those are
+ * the cakes a celebration inquiry actually starts from. */
+const wholeCakeNames = new Set(cakes.map((c) => c.name));
 
 export const metadata: Metadata = {
   title: "Patisserie — cakes, custom orders & gifting",
@@ -115,17 +122,35 @@ export default function PatisseriePage() {
         </div>
 
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredItems.map((item, i) => (
-            <Reveal key={item.name} delay={i * 0.06} className="h-full">
-              <DishCard
-                item={item}
-                image={patisserieImages[item.name]}
-                priority={i === 0}
-                className="h-full"
-                href={`/menu?q=${encodeURIComponent(item.name)}`}
-              />
-            </Reveal>
-          ))}
+          {featuredItems.map((item, i) => {
+            const askable = wholeCakeNames.has(item.name);
+            return (
+              <Reveal key={item.name} delay={i * 0.06} className="h-full">
+                <div className="flex h-full flex-col">
+                  <DishCard
+                    item={item}
+                    image={patisserieImages[item.name]}
+                    priority={i === 0}
+                    className="h-full"
+                    href={`/menu?q=${encodeURIComponent(item.name)}`}
+                  />
+                  {askable ? (
+                    <Link
+                      href={`/patisserie?cake=${encodeURIComponent(item.name)}#cake-inquiry`}
+                      aria-label={`Ask about ${item.name} — opens the cake inquiry planner`}
+                      className="link-underline -ml-1 mt-3 inline-flex min-h-11 items-center gap-1.5 self-start rounded-pill px-1 text-sm font-semibold text-caramel transition-colors hover:text-caramel-deep"
+                    >
+                      <MessageCircle
+                        className="size-4 shrink-0"
+                        aria-hidden="true"
+                      />
+                      Ask about this cake
+                    </Link>
+                  ) : null}
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
 
         <div className="mt-8">
@@ -178,15 +203,63 @@ export default function PatisseriePage() {
 
             <div className="mt-8">
               <CtaButton
-                variant="primary"
-                href={whatsappLink(whatsappMessages.cake)}
+                variant="secondary"
+                href="#cake-inquiry"
+                className="border-cream/25 bg-transparent text-cream hover:border-butter hover:text-butter"
               >
-                <MessageCircle className="size-4" aria-hidden="true" />
-                WhatsApp us for a custom cake
+                <ArrowDown className="size-4" aria-hidden="true" />
+                Plan your inquiry
               </CtaButton>
             </div>
           </div>
           </div>
+        </Reveal>
+      </section>
+
+      {/* ------------------------------------------------ Cake inquiry planner */}
+      <section
+        id="cake-inquiry"
+        aria-labelledby="inquiry-heading"
+        className="scroll-mt-24 pb-16 lg:pb-24"
+      >
+        <div className="max-w-2xl">
+          <SectionEyebrow>Plan it</SectionEyebrow>
+          <h2
+            id="inquiry-heading"
+            className="font-display mt-5 text-h2 font-semibold text-espresso"
+          >
+            Plan your cake inquiry
+          </h2>
+          <p className="mt-3 text-base leading-relaxed text-cocoa">
+            Skim down the occasion and the day, add anything worth
+            knowing — and the message that opens in WhatsApp is exactly
+            the one you see in the form, ready to edit before you send.
+          </p>
+        </div>
+        <Reveal delay={0.08} className="mt-8">
+          {/* Suspense boundary: the composer reads ?cake= (deep links
+              from the cake cards above) via useSearchParams — the
+              fallback mirrors the form’s shape so streaming in causes
+              no layout shift. */}
+          <Suspense
+            fallback={
+              <div
+                aria-hidden="true"
+                className="rounded-card border border-linen bg-ivory p-6 shadow-card sm:p-8"
+              >
+                <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                  <div className="space-y-6">
+                    <div className="h-11 rounded-pill border border-linen bg-linen/30" />
+                    <div className="h-11 max-w-md rounded-tag border border-linen bg-linen/20" />
+                    <div className="h-24 max-w-md rounded-tag border border-linen bg-linen/20" />
+                  </div>
+                  <div className="min-h-48 rounded-card bg-surface-espresso/90" />
+                </div>
+              </div>
+            }
+          >
+            <CakeInquiryForm validCakes={cakes.map((c) => c.name)} />
+          </Suspense>
         </Reveal>
       </section>
 
