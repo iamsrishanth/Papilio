@@ -1,0 +1,267 @@
+import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Bike,
+  MapPin,
+  MessageCircle,
+  Quote,
+  Star,
+} from "lucide-react";
+import { HeroSection } from "@/components/hero/hero-section";
+import { SectionEyebrow } from "@/components/site/section-eyebrow";
+import { RatingChip } from "@/components/site/rating-chip";
+import { CtaButton } from "@/components/site/cta-button";
+import { DishCard } from "@/components/menu/dish-card";
+import { HoursCard } from "@/components/site/hours-card";
+import { site, links, whatsappLink, whatsappMessages } from "@/content/site";
+import { verifiedQuotes } from "@/content/reviews";
+import { menu, type MenuItem } from "@/content/menu";
+
+// The four flagship dishes with verified prices (PROMPT.md §8)
+const signatureImages: Record<string, { src: string; alt: string }> = {
+  "Chicken & Avocado Salad": {
+    src: "/images/dish-salad.png",
+    alt: "Chicken and avocado salad with cherry tomatoes and roasted peppers at Papilio",
+  },
+  "Buttermilk Chicken Wrap": {
+    src: "/images/dish-wrap.png",
+    alt: "Buttermilk chicken wrap served with fries at Papilio",
+  },
+  "Cottage Crunch Wrap": {
+    src: "/images/dish-cottage-wrap.png",
+    alt: "Crispy cottage cheese wrap with golden fries at Papilio",
+  },
+  "Double Trouble Chicken Burger": {
+    src: "/images/dish-burger.png",
+    alt: "Double Trouble chicken burger with skinny fries and cheese dip at Papilio",
+  },
+};
+
+const signatureNames = Object.keys(signatureImages);
+const allItems: MenuItem[] = menu.flatMap((c) => c.items);
+const signatureItems = signatureNames
+  .map((name) => allItems.find((i) => i.name === name))
+  .filter((i): i is MenuItem => Boolean(i));
+
+const heroQuote = verifiedQuotes[1]; // "peaceful atmosphere" Google review
+
+export default function HomePage() {
+  return (
+    <>
+      <HeroSection />
+
+      {/* ------------------------------------------------ Signature strip */}
+      <section
+        aria-labelledby="signature-heading"
+        className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
+      >
+        <div className="max-w-2xl">
+          <SectionEyebrow>From the kitchen</SectionEyebrow>
+          <h2
+            id="signature-heading"
+            className="font-display mt-5 text-h2 font-semibold text-espresso"
+          >
+            Signature dishes
+          </h2>
+          <p className="mt-3 text-base leading-relaxed text-cocoa">
+            The plates our diners keep coming back for — priced as listed on
+            Swiggy.
+          </p>
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {signatureItems.map((item) => (
+            <DishCard
+              key={item.name}
+              item={item}
+              image={signatureImages[item.name]}
+            />
+          ))}
+        </div>
+
+        <div className="mt-8">
+          <Link
+            href="/menu"
+            className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel underline-offset-4 hover:underline"
+          >
+            See the full menu — 21 sections, 187 items
+            <ArrowRight
+              className="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:group-hover:transform-none motion-reduce:transition-none"
+              aria-hidden="true"
+            />
+          </Link>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------ Ratings band */}
+      <section
+        aria-labelledby="ratings-heading"
+        className="mx-auto w-full max-w-[1200px] px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24"
+      >
+        <div className="card-dark relative overflow-hidden rounded-card bg-surface-espresso p-8 text-cream sm:p-10 lg:p-12">
+          {/* butter wing accent — the one decorative curve per page */}
+          <div
+            aria-hidden="true"
+            className="absolute -right-10 -top-16 h-44 w-44 rounded-full bg-butter/10 blur-2xl"
+          />
+          <h2 id="ratings-heading" className="sr-only">
+            Ratings and reviews
+          </h2>
+
+          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <RatingChip
+                  platform={site.ratings.swiggy.platform}
+                  score={site.ratings.swiggy.score}
+                  count={site.ratings.swiggy.count}
+                />
+                <RatingChip
+                  platform={site.ratings.zomato.platform}
+                  score={site.ratings.zomato.score}
+                  count={site.ratings.zomato.count}
+                />
+                <RatingChip
+                  platform={site.ratings.google.platform}
+                  score={site.ratings.google.score}
+                  count={site.ratings.google.count}
+                />
+              </div>
+
+              <figure className="mt-6">
+                <Quote
+                  className="size-6 text-butter/70"
+                  aria-hidden="true"
+                />
+                <blockquote className="font-display mt-3 text-lg italic leading-relaxed text-cream/90 sm:text-xl">
+                  {heroQuote.quote}
+                </blockquote>
+                <figcaption className="label-caps mt-3 text-butter/80">
+                  {heroQuote.source}
+                </figcaption>
+              </figure>
+
+              <p className="mt-6 flex items-center gap-2 text-sm text-cream/70">
+                <Star
+                  className="size-4 fill-butter text-butter"
+                  aria-hidden="true"
+                />
+                {site.ratings.heroStatLine} · {site.costForTwo.dineIn}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 lg:items-end">
+              <CtaButton
+                variant="secondary"
+                href={links.swiggy}
+                className="border-cream/25 bg-transparent text-cream hover:border-butter hover:text-butter"
+              >
+                <Bike className="size-4" aria-hidden="true" />
+                Order on Swiggy
+              </CtaButton>
+              <CtaButton
+                variant="secondary"
+                href={links.zomato}
+                className="border-cream/25 bg-transparent text-cream hover:border-butter hover:text-butter"
+              >
+                Order on Zomato
+              </CtaButton>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------ Patisserie teaser */}
+      <section
+        aria-labelledby="patisserie-heading"
+        className="mx-auto w-full max-w-[1200px] px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24"
+      >
+        <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
+          {/* Wing-teardrop corner mask — the one decorative curve */}
+          <div className="relative min-h-[280px] overflow-hidden rounded-card lg:col-span-7">
+            <Image
+              src="/images/patisserie-signature-cake.png"
+              alt="Chocolate truffle cream cake with whipped cream swirls from the Papilio patisserie counter"
+              fill
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              className="object-cover rounded-tl-card rounded-tr-card rounded-bl-card rounded-br-[110px]"
+            />
+          </div>
+
+          <div className="flex flex-col justify-center rounded-card bg-linen/50 p-8 lg:col-span-5 lg:p-10">
+            <SectionEyebrow className="bg-ivory">Patisserie</SectionEyebrow>
+            <h2
+              id="patisserie-heading"
+              className="font-display mt-5 text-h2 font-semibold text-espresso"
+            >
+              Cakes, counter desserts &amp; gifting
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-cocoa">
+              The patisserie half of Papilio — 28 counter desserts and whole
+              cakes from our counter, celebration cakes made to order, and
+              gift boxes worth giving. Follow the cakes and gifting highlights
+              on our feed.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <CtaButton variant="secondary" href="/patisserie">
+                Explore the patisserie
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </CtaButton>
+              <a
+                href={whatsappLink(whatsappMessages.cake)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-pill px-4 py-3 text-sm font-semibold text-caramel underline-offset-4 hover:underline"
+              >
+                <MessageCircle className="size-4" aria-hidden="true" />
+                WhatsApp us for custom cakes
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------ Visit band */}
+      <section
+        aria-labelledby="visit-heading"
+        className="mx-auto w-full max-w-[1200px] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-28"
+      >
+        <div className="rounded-card bg-linen/40 p-8 sm:p-10 lg:p-12">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+            <div className="lg:col-span-7">
+              <SectionEyebrow className="bg-ivory">Visit</SectionEyebrow>
+              <h2
+                id="visit-heading"
+                className="font-display mt-5 text-h2 font-semibold text-espresso"
+              >
+                Find us in Excise Colony
+              </h2>
+              <address className="mt-5 flex items-start gap-2.5 text-base not-italic leading-relaxed text-cocoa">
+                <MapPin className="mt-1 size-5 shrink-0 text-caramel" aria-hidden="true" />
+                <span>
+                  {site.address.line1}
+                  <br />
+                  {site.address.line2}
+                </span>
+              </address>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <CtaButton variant="primary" href={links.maps}>
+                  <MapPin className="size-4" aria-hidden="true" />
+                  Get directions
+                </CtaButton>
+                <CtaButton variant="secondary" href="/visit">
+                  Plan your visit
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </CtaButton>
+              </div>
+            </div>
+            <div className="lg:col-span-5">
+              <HoursCard />
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
