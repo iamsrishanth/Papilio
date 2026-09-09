@@ -4,8 +4,7 @@ import "./globals.css";
 import { SkipLink } from "@/components/site/skip-link";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
-import { BackToTop } from "@/components/site/back-to-top";
-import { Toaster } from "@/components/ui/sonner";
+import { ClientProviders } from "@/components/site/client-providers";
 import { site, links, SITE_URL } from "@/content/site";
 
 const playfair = Playfair_Display({
@@ -139,9 +138,7 @@ export default function RootLayout({
           </main>
           <SiteFooter />
         </div>
-        <BackToTop />
-        {/* Sonner toasts — themed via the popover tokens (ivory/espresso/linen). */}
-        <Toaster position="bottom-center" offset={20} />
+        <ClientProviders />
       </body>
     </html>
   );

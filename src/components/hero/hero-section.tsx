@@ -24,6 +24,7 @@ export function HeroSection() {
           alt="Swallowtail butterfly with butter-gold wings — the Papilio emblem"
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
           className="object-cover object-[74%_center]"
         />

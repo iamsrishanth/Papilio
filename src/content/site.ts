@@ -6,8 +6,8 @@
  * fill-before-ship policy.
  */
 
-// TODO: replace with the production domain before ship.
-export const SITE_URL = "http://localhost:3000";
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://papilio.srishanth.com";
 
 export const site = {
   /** Wordmark is all-caps "PAPILIO"; running text uses "Papilio". */

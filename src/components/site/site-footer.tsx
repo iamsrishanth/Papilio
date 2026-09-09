@@ -33,7 +33,7 @@ export function SiteFooter() {
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-2 rounded-pill border border-cream/20 px-4 py-2 text-sm text-cream/90 transition-colors hover:border-butter hover:text-butter"
-              aria-label="Papilio on Instagram"
+              aria-label={`${site.instagramHandle} — Papilio on Instagram`}
             >
               <Instagram className="size-4" aria-hidden="true" />
               {site.instagramHandle}

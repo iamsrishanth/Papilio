@@ -1,25 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
 
 /**
- * Reveal — a subtle scroll-into-view fade-up (opacity + translate-y,
- * 500ms, once, -60px bottom margin).
+ * Reveal — a subtle scroll-into-view fade-up for content below the fold.
  *
- * SSR-safety contract: the hidden state is armed only client-side in a
- * pre-paint layout effect and ONLY when motion is allowed. Server HTML,
- * no-JS, and prefers-reduced-motion all render fully visible — hydration
- * can never freeze content at opacity:0 (the failure mode of baking
- * framer `initial` styles into SSR markup).
- *
- * Applied sparingly to section headers and card grids — never to the
- * hero (LCP) or the 3D canvas.
+ * Performance-first contract:
+ * - Content renders fully visible in SSR and initial paint (zero hydration flicker).
+ * - Elements already in the viewport on initial load remain visible without opacity dip (optimizes Speed Index).
+ * - Below-the-fold elements arm and reveal via direct class manipulation on IntersectionObserver (zero React state re-renders, zero main-thread blocking).
+ * - Respects prefers-reduced-motion automatically.
  */
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
 export function Reveal({
   children,
   className,
@@ -34,29 +25,34 @@ export function Reveal({
   as?: "div" | "section" | "figure" | "li";
 }) {
   const ref = React.useRef<HTMLElement | null>(null);
-  // "armed" = the hidden state may be applied (motion allowed, JS up)
-  const [armed, setArmed] = React.useState(false);
-  const [shown, setShown] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // Reduced motion / no IO support: stay visible, no classes at all.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
     if (!("IntersectionObserver" in window)) {
       return;
     }
-    setArmed(true);
+
+    // Check if element is already within the initial viewport
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      return;
+    }
+
+    el.classList.add("reveal-hidden");
+
     const io = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
-          setShown(true);
+          el.classList.remove("reveal-hidden");
+          el.classList.add("reveal-shown");
           io.disconnect();
         }
       },
-      { rootMargin: "0px 0px -60px 0px" }
+      { rootMargin: "0px 0px -40px 0px" }
     );
     io.observe(el);
     return () => io.disconnect();
@@ -67,10 +63,7 @@ export function Reveal({
   return (
     <Tag
       ref={ref}
-      className={cn(
-        armed && (shown ? "reveal-shown" : "reveal-hidden"),
-        className
-      )}
+      className={className}
       style={
         {
           "--reveal-y": `${y}px`,

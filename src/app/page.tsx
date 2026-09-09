@@ -292,7 +292,7 @@ export default function HomePage() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center gap-2.5 text-sm font-semibold text-caramel link-underline"
-            aria-label={`Papilio on Instagram — ${site.instagramHandle}`}
+            aria-label={`${site.instagramHandle} — Papilio on Instagram`}
           >
             <Instagram className="size-4" aria-hidden="true" />
             {site.instagramHandle}
