@@ -90,7 +90,7 @@ export default function HomePage() {
 
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {signatureItems.map((item, i) => (
-            <Reveal key={item.name} delay={i * 0.07} className="h-full">
+            <Reveal key={item.name} delay={i * 0.07} className="h-full flex flex-col">
               <DishCard
                 item={item}
                 image={signatureImages[item.name]}

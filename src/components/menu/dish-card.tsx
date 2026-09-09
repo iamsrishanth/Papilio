@@ -26,7 +26,7 @@ export function DishCard({
   const card = (
     <article
       className={cn(
-        "group flex flex-col overflow-hidden rounded-card bg-ivory shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transition-none motion-reduce:hover:transform-none",
+        "group flex h-full flex-1 flex-col overflow-hidden rounded-card bg-ivory shadow-card transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift motion-reduce:transition-none motion-reduce:hover:transform-none",
         className
       )}
     >
@@ -85,7 +85,10 @@ export function DishCard({
       <Link
         href={href}
         aria-label={`Find ${item.name} on the menu`}
-        className="block rounded-card focus-visible:outline-offset-4"
+        className={cn(
+          "flex h-full flex-1 flex-col rounded-card focus-visible:outline-offset-4",
+          className
+        )}
       >
         {card}
       </Link>
