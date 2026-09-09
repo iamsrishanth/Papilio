@@ -104,6 +104,7 @@ export default function HomePage() {
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
           <Link
             href="/menu"
+            prefetch={false}
             className="group inline-flex items-center gap-2 text-sm font-semibold text-caramel link-underline"
           >
             See the full menu — 21 sections, 187 items
@@ -118,6 +119,7 @@ export default function HomePage() {
           />
           <Link
             href="/menu?signature=1"
+            prefetch={false}
             className="inline-flex items-center gap-2 text-sm font-semibold text-cocoa link-underline hover:text-caramel"
           >
             Filter the menu to these four
@@ -413,6 +415,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/visit#faq"
+                prefetch={false}
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cocoa link-underline hover:text-caramel"
               >
                 <MessageCircle

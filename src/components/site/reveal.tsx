@@ -11,6 +11,29 @@ import * as React from "react";
  * - Below-the-fold elements arm and reveal via direct class manipulation on IntersectionObserver (zero React state re-renders, zero main-thread blocking).
  * - Respects prefers-reduced-motion automatically.
  */
+let sharedObserver: IntersectionObserver | null = null;
+
+function getSharedObserver() {
+  if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+    return null;
+  }
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("reveal-hidden");
+            entry.target.classList.add("reveal-shown");
+            sharedObserver?.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: "50px 0px" }
+    );
+  }
+  return sharedObserver;
+}
+
 export function Reveal({
   children,
   className,
@@ -32,30 +55,16 @@ export function Reveal({
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
-    if (!("IntersectionObserver" in window)) {
-      return;
-    }
 
-    // Check if element is already within the initial viewport
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      return;
-    }
+    const io = getSharedObserver();
+    if (!io) return;
 
     el.classList.add("reveal-hidden");
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          el.classList.remove("reveal-hidden");
-          el.classList.add("reveal-shown");
-          io.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -40px 0px" }
-    );
     io.observe(el);
-    return () => io.disconnect();
+
+    return () => {
+      io.unobserve(el);
+    };
   }, []);
 
   const Tag = as as React.ElementType;

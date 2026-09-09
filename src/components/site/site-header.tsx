@@ -35,7 +35,6 @@ export function SiteHeader() {
         setScrolled(window.scrollY > 8);
       });
     };
-    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       if (raf) cancelAnimationFrame(raf);
@@ -56,6 +55,7 @@ export function SiteHeader() {
         {/* Wordmark lockup */}
         <Link
           href="/"
+          prefetch={false}
           className="group inline-flex items-center gap-2.5 rounded-pill py-1 pr-3"
           aria-label="Papilio — home"
         >
@@ -76,6 +76,7 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "relative rounded-pill px-3.5 py-2 text-sm transition-colors after:absolute after:inset-x-3.5 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-caramel after:transition-transform after:duration-300 after:content-['']",
@@ -134,6 +135,7 @@ export function SiteHeader() {
                   <SheetClose asChild key={item.href}>
                     <Link
                       href={item.href}
+                      prefetch={false}
                       aria-current={active ? "page" : undefined}
                       className={cn(
                         "font-display text-h3 rounded-pill px-4 py-3 transition-colors",

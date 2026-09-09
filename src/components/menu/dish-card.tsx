@@ -37,7 +37,7 @@ export function DishCard({
             alt={image.alt}
             fill
             priority={priority}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 280px"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:group-hover:transform-none motion-reduce:transition-none"
           />
         </div>
@@ -84,6 +84,7 @@ export function DishCard({
     return (
       <Link
         href={href}
+        prefetch={false}
         aria-label={`Find ${item.name} on the menu`}
         className={cn(
           "flex h-full flex-1 flex-col rounded-card focus-visible:outline-offset-4",

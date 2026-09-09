@@ -48,7 +48,7 @@ export function CtaButton({
     }
     return (
       <Button asChild variant="ghost" className={classes}>
-        <Link href={href}>{children}</Link>
+        <Link href={href} prefetch={false}>{children}</Link>
       </Button>
     );
   }
