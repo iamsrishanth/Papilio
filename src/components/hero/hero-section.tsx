@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { ChevronDown, Bike, ArrowRight } from "lucide-react";
-import { HeroCanvas } from "@/components/hero/hero-canvas";
 import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { RatingChip } from "@/components/site/rating-chip";
 import { CtaButton } from "@/components/site/cta-button";
@@ -8,9 +7,9 @@ import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
 import { site, links } from "@/content/site";
 
 /**
- * Home hero — full viewport. The poster (LCP candidate) renders
- * server-side; the Scene A canvas hydrates over it only when WebGL
- * passes detection and motion is allowed. All copy stays in the DOM.
+ * Home hero — full viewport with the golden swallowtail butterfly emblem
+ * illustration on warm textured cream paper, overlaid with an aesthetic
+ * gradient scrim for text legibility.
  */
 export function HeroSection() {
   return (
@@ -18,7 +17,7 @@ export function HeroSection() {
       aria-label="Papilio — patisserie café in Hanamkonda"
       className="relative flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden"
     >
-      {/* Poster fallback — butterfly illustration on cream, same layout */}
+      {/* Butterfly emblem background illustration */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/hero-poster.png"
@@ -30,13 +29,10 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Scene A canvas (opaque gradient backdrop once running) */}
-      <HeroCanvas />
-
       {/* Legibility scrim over the poster for the text zone */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-cream/95 via-cream/70 to-cream/10 sm:from-cream/90 sm:via-cream/50"
+        className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-cream/95 via-cream/70 to-cream/10 sm:from-cream/90 sm:via-cream/50"
       />
 
       {/* DOM text layer — never rendered inside the canvas */}

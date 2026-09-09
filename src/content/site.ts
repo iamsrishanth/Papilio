@@ -89,8 +89,9 @@ export const site = {
 // ---------------------------------------------------------------- Deep links
 
 export const links = {
-  swiggy: "https://www.swiggy.com/rest772389",
-  zomato: "https://www.zomato.com/hanamkonda/restaurants?q=Papilio",
+  swiggy:
+    "https://www.swiggy.com/city/warangal/papilio-excise-colony-hanamkonda-rest772389",
+  zomato: "https://www.zomato.com/warangal/papilio-hanamakonda/order",
   /** Verified Maps link from the IG bio. */
   maps: "https://maps.app.goo.gl/1XtNY2A9b6VQUNMj7",
   directions:
