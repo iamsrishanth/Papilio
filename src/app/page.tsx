@@ -195,7 +195,7 @@ export default function HomePage() {
                   className="size-4 fill-butter text-butter"
                   aria-hidden="true"
                 />
-                {site.ratings.heroStatLine} · {site.costForTwo.dineIn}
+                {site.ratings.heroStatLine} · <span className="font-currency">{site.costForTwo.dineIn}</span>
               </p>
             </div>
 

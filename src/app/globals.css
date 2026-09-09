@@ -240,6 +240,11 @@
 /* Tabular numerals so menu price columns align */
 @utility tnum {
   font-feature-settings: "tnum";
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@utility font-currency {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* Long menu sections render lazily */

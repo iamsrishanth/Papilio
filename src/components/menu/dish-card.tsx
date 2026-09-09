@@ -37,7 +37,7 @@ export function DishCard({
             alt={image.alt}
             fill
             priority={priority}
-            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 280px"
+            sizes="(max-width: 640px) 384px, (max-width: 1024px) 320px, 280px"
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:group-hover:transform-none motion-reduce:transition-none"
           />
         </div>
