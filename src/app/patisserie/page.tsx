@@ -7,7 +7,7 @@ import { SectionEyebrow } from "@/components/site/section-eyebrow";
 import { ButterflyGlyph } from "@/components/site/butterfly-glyph";
 import { CtaButton } from "@/components/site/cta-button";
 import { Reveal } from "@/components/site/reveal";
-import { DishCard } from "@/components/menu/dish-card";
+import { PatisserieCard } from "@/components/patisserie/patisserie-card";
 import { CakeInquiryForm } from "@/components/patisserie/cake-inquiry-form";
 import { JsonLd } from "@/components/site/json-ld";
 import { breadcrumbLd } from "@/lib/seo";
@@ -18,7 +18,7 @@ const cakes = menu.find((c) => c.id === "cakes")?.items ?? [];
 const counterDesserts = menu.find((c) => c.id === "counter-desserts")?.items ?? [];
 const patisserieItems: MenuItem[] = [...cakes, ...counterDesserts];
 
-/** The three photos we have for this page, keyed to menu item names. */
+/** Photos for every featured patisserie item on this page. */
 const patisserieImages: Record<string, { src: string; alt: string }> = {
   "Chocolate Truffle Cake": {
     src: "/images/patisserie-signature-cake.png",
@@ -29,9 +29,46 @@ const patisserieImages: Record<string, { src: string; alt: string }> = {
     alt: "Cream-frosted celebration cake with delicate piped borders and dried flowers",
   },
   "Nutella Sea Salt Macaron": {
-    src: "/images/patisserie-counter.png",
-    alt: "The Papilio patisserie counter with rows of macarons, tarts, éclairs and cream desserts under warm display lighting",
+    src: "/images/dish-macaron.png",
+    alt: "Nutella Sea Salt Macaron with rich chocolate hazelnut filling and flaky sea salt crystals",
   },
+  "Red Velvet Cake": {
+    src: "/images/patisserie-red-velvet.png",
+    alt: "Layered red velvet cake with creamy vanilla cheese frosting and piped rosettes",
+  },
+  "Crème Brûlée": {
+    src: "/images/patisserie-creme-brulee.png",
+    alt: "French crème brûlée in a ceramic ramekin with caramelized sugar crust and fresh raspberries",
+  },
+  "Tiramisu": {
+    src: "/images/patisserie-tiramisu.png",
+    alt: "Classic Italian tiramisu slice with coffee-soaked ladyfingers, mascarpone cream and cocoa dusting",
+  },
+  "Blueberry Cheesecake": {
+    src: "/images/patisserie-blueberry-cheesecake.png",
+    alt: "Baked New York style cheesecake slice topped with glossy blueberry compote",
+  },
+  "Choco Lava Cake": {
+    src: "/images/patisserie-choco-lava.png",
+    alt: "Warm choco lava cake with rich molten chocolate center flowing on a dessert plate",
+  },
+  "Butter Croissant": {
+    src: "/images/patisserie-butter-croissant.png",
+    alt: "Golden flaky French butter croissant with crisp puffed lamination layers",
+  },
+};
+
+/** Concise, elegant descriptions for the featured patisserie items. */
+const patisserieDescriptions: Record<string, string> = {
+  "Chocolate Truffle Cake": "Layers of dark chocolate sponge and rich truffle ganache with glossy drip glaze.",
+  "Vanilla Bean Cream Cake": "Light Madagascar vanilla bean sponge with whipped mascarpone cream and floral accents.",
+  "Nutella Sea Salt Macaron": "Crisp French almond meringue macaron filled with creamy Nutella and fleur de sel flakes.",
+  "Red Velvet Cake": "Crimson sponge layers enveloped in silky smooth Madagascar vanilla cream cheese frosting.",
+  "Crème Brûlée": "Velvety vanilla bean custard beneath a crisp, golden hand-torched sugar crust.",
+  "Tiramisu": "Espresso-soaked savoiardi ladyfingers layered with rich mascarpone and dusted Dutch cocoa.",
+  "Blueberry Cheesecake": "Baked New York style cheesecake crowned with glossy, slow-simmered blueberry compote.",
+  "Choco Lava Cake": "Decadent warm chocolate cake featuring a molten Belgian chocolate center.",
+  "Butter Croissant": "Traditional Parisian laminated pastry with flaky golden layers and rich butter aroma.",
 };
 
 /** Featured cakes and counter desserts (names from the menu module). */
@@ -51,9 +88,7 @@ const featuredItems = featuredNames
   .map((name) => patisserieItems.find((i) => i.name === name))
   .filter((i): i is MenuItem => Boolean(i));
 
-/** Whole cakes (the menu's `cakes` section) — the only items that
- * get an “Ask about this cake” composer deep link, since those are
- * the cakes a celebration inquiry actually starts from. */
+/** Whole cakes (the menu's `cakes` section) — celebration inquiry started from here. */
 const wholeCakeNames = new Set(cakes.map((c) => c.name));
 
 export const metadata: Metadata = {
@@ -123,31 +158,17 @@ export default function PatisseriePage() {
 
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {featuredItems.map((item, i) => {
-            const askable = wholeCakeNames.has(item.name);
+            const isCake = wholeCakeNames.has(item.name);
             return (
-              <Reveal key={item.name} delay={i * 0.06} className="h-full">
-                <div className="flex h-full flex-col">
-                  <DishCard
-                    item={item}
-                    image={patisserieImages[item.name]}
-                    priority={i === 0}
-                    className="h-full"
-                    href={`/menu?q=${encodeURIComponent(item.name)}`}
-                  />
-                  {askable ? (
-                    <Link
-                      href={`/patisserie?cake=${encodeURIComponent(item.name)}#cake-inquiry`}
-                      aria-label={`Ask about ${item.name} — opens the cake inquiry planner`}
-                      className="link-underline -ml-1 mt-3 inline-flex min-h-11 items-center gap-1.5 self-start rounded-pill px-1 text-sm font-semibold text-caramel transition-colors hover:text-caramel-deep"
-                    >
-                      <MessageCircle
-                        className="size-4 shrink-0"
-                        aria-hidden="true"
-                      />
-                      Ask about this cake
-                    </Link>
-                  ) : null}
-                </div>
+              <Reveal key={item.name} delay={i * 0.05} className="h-full">
+                <PatisserieCard
+                  item={item}
+                  image={patisserieImages[item.name]}
+                  description={patisserieDescriptions[item.name] || item.d || ""}
+                  isCake={isCake}
+                  priority={i === 0}
+                  className="h-full"
+                />
               </Reveal>
             );
           })}
