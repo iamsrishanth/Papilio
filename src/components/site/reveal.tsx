@@ -1,39 +1,11 @@
-"use client";
-
 import * as React from "react";
 
 /**
- * Reveal — a subtle scroll-into-view fade-up for content below the fold.
- *
- * Performance-first contract:
- * - Content renders fully visible in SSR and initial paint (zero hydration flicker).
- * - Elements already in the viewport on initial load remain visible without opacity dip (optimizes Speed Index).
- * - Below-the-fold elements arm and reveal via direct class manipulation on IntersectionObserver (zero React state re-renders, zero main-thread blocking).
- * - Respects prefers-reduced-motion automatically.
+ * Reveal — a zero-JS Server Component that attaches data-reveal attributes
+ * and CSS custom properties. A single global observer in ClientProviders
+ * activates the subtle scroll animation without creating multiple React
+ * client component boundaries or running layout queries.
  */
-let sharedObserver: IntersectionObserver | null = null;
-
-function getSharedObserver() {
-  if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
-    return null;
-  }
-  if (!sharedObserver) {
-    sharedObserver = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.remove("reveal-hidden");
-            entry.target.classList.add("reveal-shown");
-            sharedObserver?.unobserve(entry.target);
-          }
-        }
-      },
-      { rootMargin: "50px 0px" }
-    );
-  }
-  return sharedObserver;
-}
-
 export function Reveal({
   children,
   className,
@@ -47,31 +19,11 @@ export function Reveal({
   y?: number;
   as?: "div" | "section" | "figure" | "li";
 }) {
-  const ref = React.useRef<HTMLElement | null>(null);
-
-  React.useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    const io = getSharedObserver();
-    if (!io) return;
-
-    el.classList.add("reveal-hidden");
-    io.observe(el);
-
-    return () => {
-      io.unobserve(el);
-    };
-  }, []);
-
   const Tag = as as React.ElementType;
 
   return (
     <Tag
-      ref={ref}
+      data-reveal=""
       className={className}
       style={
         {

@@ -17,16 +17,6 @@ export function HeroSection() {
       aria-label="Papilio — patisserie café in Hanamkonda"
       className="relative flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden"
     >
-      {/* Explicit preload for LCP image discovery */}
-      <link
-        rel="preload"
-        as="image"
-        href="/_next/image?url=%2Fimages%2Fhero-poster.png&w=750&q=75"
-        imageSrcSet="/_next/image?url=%2Fimages%2Fhero-poster.png&w=360&q=75 360w, /_next/image?url=%2Fimages%2Fhero-poster.png&w=480&q=75 480w, /_next/image?url=%2Fimages%2Fhero-poster.png&w=640&q=75 640w, /_next/image?url=%2Fimages%2Fhero-poster.png&w=750&q=75 750w, /_next/image?url=%2Fimages%2Fhero-poster.png&w=828&q=75 828w, /_next/image?url=%2Fimages%2Fhero-poster.png&w=1080&q=75 1080w, /_next/image?url=%2Fimages%2Fhero-poster.png&w=1200&q=75 1200w, /_next/image?url=%2Fimages%2Fhero-poster.png&w=1920&q=75 1920w"
-        imageSizes="100vw"
-        fetchPriority="high"
-      />
-
       {/* Butterfly emblem background illustration */}
       <div className="absolute inset-0 z-0">
         <Image
